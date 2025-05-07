@@ -40,9 +40,9 @@ while running:
         if event.type == pygame.QUIT:
             running = False
             
-    # Set Background Color and Board Image  
+    # Set Screen and Border Color
     screen.fill((11, 11, 11))
-
+    border.fill((63, 63, 63))
     
     # Draw Player and Score Info
     screen.blit(title_surface, (screen_width/2 - 170, 50))
@@ -53,11 +53,9 @@ while running:
     screen.blit(player2_name_surface, (screen_width - 270, 100))
     screen.blit(player2_score_surface, (screen_width - 270, 125))
     
-    border.fill((63, 63, 63))
+    # Draw Board
     screen.blit(border, (145, 165))
     screen.blit(board, (150, 170))
-    
-    
     board.blit(board_background, (0, 0))
 
     # Render Display
