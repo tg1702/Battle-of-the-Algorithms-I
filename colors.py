@@ -1,0 +1,6 @@
+background_color = (11, 11, 11)
+border_color = (63, 63, 63)
+player1_color = (0, 126, 211)
+player1_border_color = (114, 220, 255)
+player2_color = (211, 0, 179)
+player2_border_color = (255, 114, 239)
