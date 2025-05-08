@@ -11,12 +11,12 @@ class Player:
         self.score = 0
         self.board = board       
 
-        position = {"x": 0, "y": 0}
+        position = {"x": 0, "y": board.height/2}
         
         self.snake = snake.Snake(position, self.color, self.border_color)
         
-        if (self.id == 1): 
-            position = {"x": board.width - self.snake.size, "y": board.height - self.snake.size}
+        if (self.id == 2): 
+            position = {"x": board.width - self.snake.size, "y": board.height/2}
             self.snake.position = position
 
     def draw_score(self, surface, position):
