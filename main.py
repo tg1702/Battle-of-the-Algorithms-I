@@ -1,6 +1,7 @@
 import pygame
 from config import config
 import core.board as board, core.scorebar as scorebar, core.player as player, core.food as food
+import core.game_state as game_state
 import colors
 
 pygame.init()
@@ -22,16 +23,22 @@ title_font = pygame.font.SysFont(None, 40)
 title_surface = title_font.render("Battle of the Algorithms", True, "white")
 board = board.Board(board_width, board_height)
 scorebar = scorebar.ScoreBar(350, 100, screen)
-food_list = [food.Food() for _ in range(3)]
+apples = [food.Food() for _ in range(3)]
 
 # Initialize Players
 player1 = player.Player(1, "John", board)
 player2 = player.Player(2, "Jenny", board)
 
+# Game State
+state = game_state.GameState(board, player1, player2)
+
 while running:
     # Poll for events
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
+            running = False
+            
+        if state.game_over:
             running = False
             
         if event.type == pygame.KEYDOWN:
@@ -63,13 +70,9 @@ while running:
     player1.snake.draw(board.board)
     player2.snake.draw(board.board)
     
-    for apple in food_list:
-        if (board.occupied[apple.x // apple.size][apple.y // apple.size] == False):
-            apple.draw(board)
-        else:
-            apple.x = 0
-            apple.y = 0
-            apple.draw(board)
+    # Draw Food
+    for apple in apples:
+        apple.draw(board)
     
     # Draw Score Bar
     scorebar.draw(screen, player1, player2)

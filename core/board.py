@@ -10,7 +10,6 @@ class Board:
         self.border = pygame.Surface((self.width + 10, self.height + 10))
         self.rows = height // config.GRID_SIZE
         self.cols = width // config.GRID_SIZE
-        self.occupied = [[False for _ in range(self.rows)] for _ in range(self.cols)]
     
     def draw(self, screen):
         """
