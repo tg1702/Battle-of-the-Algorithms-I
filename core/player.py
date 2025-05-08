@@ -32,7 +32,7 @@ class Player:
         font = pygame.font.SysFont(None, 25)
         
         name_surface = font.render("Player " + str(self.id) + " - " + self.name, True, self.border_color)
-        score_surface = font.render("Score: 0", True, "white")
+        score_surface = font.render(f"Score: {self.score}", True, "white")
         
         surface.blit(name_surface, (position["x"], position["y"]))
         surface.blit(score_surface, (position["x"], position["y"] + 25))

@@ -26,7 +26,6 @@ title_font = pygame.font.SysFont(None, 40)
 title_surface = title_font.render("Battle of the Algorithms", True, "white")
 board = board.Board(board_width, board_height)
 scorebar = scorebar.ScoreBar(350, 100, screen)
-apples = [food.Food() for _ in range(3)]
 
 # Initialize Players
 player1 = player.Player(1, "John", board)
@@ -34,6 +33,7 @@ player2 = player.Player(2, "Jenny", board)
 
 # Game State
 state = game_state.GameState(board, player1, player2)
+apples = state.food_list
 
 while running:
     # Handle Events
@@ -77,6 +77,9 @@ while running:
     player2.snake.move(delta_time)
     player1.snake.draw(board.board)
     player2.snake.draw(board.board)
+        
+    food_collision = state.food_collision(player1)
+    food_collision = state.food_collision(player2)
     
     # Draw Food
     for apple in apples:
