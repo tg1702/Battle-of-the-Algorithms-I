@@ -1,10 +1,12 @@
-import pygame
+import pygame, time
 from config import config
 import core.board as board, core.scorebar as scorebar, core.player as player, core.food as food
 import core.game_state as game_state
 import colors
 
 pygame.init()
+
+running = True
 
 # Screen Setup 
 screen_width = config.SCREEN_WIDTH
@@ -14,9 +16,10 @@ board_height = config.BOARD_HEIGHT
 
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption(config.TITLE)
-clock = pygame.time.Clock()
 
-running = True
+# Setup Time
+clock = pygame.time.Clock()
+previous_time = pygame.time.get_ticks()
 
 # Board Setup
 title_font = pygame.font.SysFont(None, 40)
@@ -33,7 +36,7 @@ player2 = player.Player(2, "Jenny", board)
 state = game_state.GameState(board, player1, player2)
 
 while running:
-    # Poll for events
+    # Handle Events
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -53,6 +56,11 @@ while running:
                 
             if event.key == pygame.K_UP:
                 player1.snake.direction = "up"
+                
+    # Calculate Time
+    current_time = pygame.time.get_ticks()
+    delta_time = current_time - previous_time
+    previous_time = current_time
             
     # Fill Screen and Draw Game Board
     screen.fill(colors.background_color)
@@ -65,8 +73,8 @@ while running:
     player2.draw_score(screen, {"x": screen_width - 270, "y": 100})
     
     # Draw Player Snakes
-    player1.snake.move()
-    player2.snake.move()
+    player1.snake.move(delta_time)
+    player2.snake.move(delta_time)
     player1.snake.draw(board.board)
     player2.snake.draw(board.board)
     
