@@ -1,5 +1,5 @@
 import pygame
-import board, scorebar, player
+import board, scorebar, player, food
 import colors
 
 pygame.init()
@@ -17,8 +17,9 @@ running = True
 # Board Setup
 title_font = pygame.font.SysFont(None, 40)
 title_surface = title_font.render("Battle of the Algorithms", True, "white")
-board = board.Board(screen_width - 300, screen_height - 200)
+board = board.Board(975, 510)
 scorebar = scorebar.ScoreBar(350, 100, screen)
+food_list = [food.Food(board) for _ in range(3)]
 
 # Initialize Players
 player1 = player.Player(1, "John", board)
@@ -44,9 +45,17 @@ while running:
     player1.snake.draw(board.board)
     player2.snake.draw(board.board)
     
+    for apple in food_list:
+        if (board.occupied[apple.x // apple.size][apple.y // apple.size] == False):
+            apple.draw(board)
+        else:
+            apple.x = 0
+            apple.y = 0
+            apple.draw(board)
+    
     # Draw Score Bar
     scorebar.draw(screen, player1, player2)
-
+    
     # Render Display
     pygame.display.flip()
     

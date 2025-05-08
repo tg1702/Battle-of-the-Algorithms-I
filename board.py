@@ -7,6 +7,9 @@ class Board:
         self.height = height
         self.board = pygame.Surface((self.width, self.height))
         self.border = pygame.Surface((self.width + 10, self.height + 10))
+        self.rows = height // 15
+        self.cols = width // 15
+        self.occupied = [[False for _ in range(self.rows)] for _ in range(self.cols)]
     
     def draw(self, screen):
         """
