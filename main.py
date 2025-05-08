@@ -1,15 +1,18 @@
 import pygame
+from config import config
 import board, scorebar, player, food
 import colors
 
 pygame.init()
 
 # Screen Setup 
-screen_width = 1280
-screen_height = 720
+screen_width = config.SCREEN_WIDTH
+screen_height = config.SCREEN_HEIGHT
+board_width = config.BOARD_WIDTH
+board_height = config.BOARD_HEIGHT
 
 screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption("SnakeAI")
+pygame.display.set_caption(config.TITLE)
 clock = pygame.time.Clock()
 
 running = True
@@ -17,9 +20,9 @@ running = True
 # Board Setup
 title_font = pygame.font.SysFont(None, 40)
 title_surface = title_font.render("Battle of the Algorithms", True, "white")
-board = board.Board(975, 510)
+board = board.Board(board_width, board_height)
 scorebar = scorebar.ScoreBar(350, 100, screen)
-food_list = [food.Food(board) for _ in range(3)]
+food_list = [food.Food() for _ in range(3)]
 
 # Initialize Players
 player1 = player.Player(1, "John", board)
@@ -75,6 +78,6 @@ while running:
     pygame.display.flip()
     
     # Set Frame Rate
-    clock.tick(60)
+    clock.tick(config.FPS)
     
 pygame.quit()

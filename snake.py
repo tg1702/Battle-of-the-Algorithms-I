@@ -1,8 +1,9 @@
 import pygame
+from config import config
 
 class Snake:
     def __init__(self, position, direction, color, border_color):
-        self.size = 15
+        self.size = config.GRID_SIZE
         self.length = 1
         self.direction = direction
         self.color = color
@@ -24,11 +25,11 @@ class Snake:
     def move(self):
         match self.direction:
             case "left":
-                self.position["x"] -= 15
+                self.position["x"] -= config.GRID_SIZE
             case "right":
-                self.position["x"] += 15
+                self.position["x"] += config.GRID_SIZE
             case "up":
-                self.position["y"] -= 15
+                self.position["y"] -= config.GRID_SIZE
             case "down":
-                self.position["y"] += 15
+                self.position["y"] += config.GRID_SIZE
         

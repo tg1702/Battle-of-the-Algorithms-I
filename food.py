@@ -1,12 +1,13 @@
 import random
 import pygame
 import colors
+from config import config
 
 class Food:
-    def __init__(self, board):
-        self.size = 15
-        self.x = random.randint(0, (board.width // self.size) - 1) * self.size
-        self.y = random.randint(0, (board.height // self.size) - 1) * self.size
+    def __init__(self):
+        self.size = config.GRID_SIZE
+        self.x = random.randint(0, (config.BOARD_WIDTH // self.size) - 1) * self.size
+        self.y = random.randint(0, (config.BOARD_HEIGHT // self.size) - 1) * self.size
         self.hit = False
         
     def draw(self, board):
