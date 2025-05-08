@@ -41,9 +41,6 @@ while running:
         if event.type == pygame.QUIT:
             running = False
             
-        if state.game_over:
-            running = False
-            
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
                 player1.snake.direction = "left"
@@ -57,41 +54,44 @@ while running:
             if event.key == pygame.K_UP:
                 player1.snake.direction = "up"
                 
-    # Calculate Time
-    current_time = pygame.time.get_ticks()
-    delta_time = current_time - previous_time
-    previous_time = current_time
-            
-    # Fill Screen and Draw Game Board
-    screen.fill(colors.background_color)
-    board.draw(screen)
+    if state.game_over == False:
+        # Calculate Time
+        current_time = pygame.time.get_ticks()
+        delta_time = current_time - previous_time
+        previous_time = current_time
+                
+        # Fill Screen and Draw Game Board
+        screen.fill(colors.background_color)
+        board.draw(screen)
 
-    # Render Text
-    screen.blit(title_surface, (screen_width/2 - 165, 50))
-    
-    player1.draw_score(screen, {"x": 150, "y": 100})
-    player2.draw_score(screen, {"x": screen_width - 270, "y": 100})
-    
-    # Draw Player Snakes
-    player1.snake.move(delta_time)
-    player2.snake.move(delta_time)
-    player1.snake.draw(board.board)
-    player2.snake.draw(board.board)
+        # Render Text
+        screen.blit(title_surface, (screen_width/2 - 165, 50))
         
-    state.food_collision(player1)
-    state.food_collision(player2)
-    
-    # Draw Food
-    for apple in apples:
-        apple.draw(board)
-    
-    # Draw Score Bar
-    scorebar.draw(screen, player1, player2)
-    
-    # Render Display
-    pygame.display.flip()
-    
-    # Set Frame Rate
-    clock.tick(config.FPS)
+        player1.draw_score(screen, {"x": 150, "y": 100})
+        player2.draw_score(screen, {"x": screen_width - 270, "y": 100})
+        
+        # Draw Player Snakes
+        player1.snake.move(delta_time)
+        player2.snake.move(delta_time)
+        player1.snake.draw(board.board)
+        player2.snake.draw(board.board)
+            
+        state.check_food_collision(player1)
+        state.check_food_collision(player2)
+        state.check_player_collision(player1)
+        state.check_player_collision(player2)
+        
+        # Draw Food
+        for apple in apples:
+            apple.draw(board)
+        
+        # Draw Score Bar
+        scorebar.draw(screen, player1, player2)
+        
+        # Render Display
+        pygame.display.flip()
+        
+        # Set Frame Rate
+        clock.tick(config.FPS)
     
 pygame.quit()
