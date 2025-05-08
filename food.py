@@ -9,9 +9,6 @@ class Food:
         self.y = random.randint(0, (board.height // self.size) - 1) * self.size
         self.hit = False
         
-        print(board.width)
-        print(board.height)
-        
     def draw(self, board):
         """
         Draws the food on the given board surface.
