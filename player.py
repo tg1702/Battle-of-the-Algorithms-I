@@ -15,7 +15,7 @@ class Player:
         
         self.snake = snake.Snake(position, self.color, self.border_color)
         
-        if (self.id == 2): 
+        if self.id == 2: 
             position = {"x": board.width - self.snake.size, "y": board.height/2}
             self.snake.position = position
 

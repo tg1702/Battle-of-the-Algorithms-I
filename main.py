@@ -1,5 +1,5 @@
 import pygame
-import board, player
+import board, scorebar, player
 import colors
 
 pygame.init()
@@ -14,14 +14,11 @@ clock = pygame.time.Clock()
 
 running = True
 
-# Font Setup
+# Board Setup
 title_font = pygame.font.SysFont(None, 40)
-
-# Title Text
 title_surface = title_font.render("Battle of the Algorithms", True, "white")
-
-# Game Board Setup
 board = board.Board(screen_width - 300, screen_height - 200)
+scorebar = scorebar.ScoreBar(350, 100, screen)
 
 # Initialize Players
 player1 = player.Player(1, "John", board)
@@ -37,8 +34,8 @@ while running:
     screen.fill(colors.background_color)
     board.draw(screen)
 
-    # Draw Player and Score Info
-    screen.blit(title_surface, (screen_width/2 - 170, 50))
+    # Render Text
+    screen.blit(title_surface, (screen_width/2 - 165, 50))
     
     player1.draw_score(screen, {"x": 150, "y": 100})
     player2.draw_score(screen, {"x": screen_width - 270, "y": 100})
@@ -46,6 +43,9 @@ while running:
     # Draw Player Snakes
     player1.snake.draw(board.board)
     player2.snake.draw(board.board)
+    
+    # Draw Score Bar
+    scorebar.draw(screen, player1, player2)
 
     # Render Display
     pygame.display.flip()
