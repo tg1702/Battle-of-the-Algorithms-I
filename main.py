@@ -1,6 +1,6 @@
 import pygame
 from config import config
-import board, scorebar, player, food
+import core.board as board, core.scorebar as scorebar, core.player as player, core.food as food
 import colors
 
 pygame.init()

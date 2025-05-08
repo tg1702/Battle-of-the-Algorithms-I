@@ -1,6 +1,6 @@
 import pygame
 import colors
-import snake
+import core.snake as snake
 
 class Player: 
     def __init__(self, id, name, board):
