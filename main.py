@@ -78,8 +78,8 @@ while running:
     player1.snake.draw(board.board)
     player2.snake.draw(board.board)
         
-    food_collision = state.food_collision(player1)
-    food_collision = state.food_collision(player2)
+    state.food_collision(player1)
+    state.food_collision(player2)
     
     # Draw Food
     for apple in apples:

@@ -53,6 +53,11 @@ class GameState:
             if (food.x // config.GRID_SIZE == player.snake.position["x"] // config.GRID_SIZE and 
                 food.y // config.GRID_SIZE == player.snake.position["y"] // config.GRID_SIZE):
                     self.food_list.remove(food)
+                    self.occupied[food.x // config.GRID_SIZE][food.y // config.GRID_SIZE] = {}
+                    
+                    self.food_list.append(Food())
+                    self.occupied[self.food_list[-1].x // config.GRID_SIZE][self.food_list[-1].y // config.GRID_SIZE] = self.food_list[-1]
+                    
                     player.snake.length += 1
                     player.score += 1
             
