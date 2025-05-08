@@ -31,6 +31,19 @@ while running:
         if event.type == pygame.QUIT:
             running = False
             
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                player1.snake.direction = "left"
+                
+            if event.key == pygame.K_RIGHT:
+                player1.snake.direction = "right"
+                
+            if event.key == pygame.K_DOWN:
+                player1.snake.direction = "down"
+                
+            if event.key == pygame.K_UP:
+                player1.snake.direction = "up"
+            
     # Fill Screen and Draw Game Board
     screen.fill(colors.background_color)
     board.draw(screen)
@@ -42,6 +55,8 @@ while running:
     player2.draw_score(screen, {"x": screen_width - 270, "y": 100})
     
     # Draw Player Snakes
+    player1.snake.move()
+    player2.snake.move()
     player1.snake.draw(board.board)
     player2.snake.draw(board.board)
     
