@@ -69,24 +69,25 @@ while running:
         
         player1.draw_score(screen, {"x": 150, "y": 100})
         player2.draw_score(screen, {"x": screen_width - 270, "y": 100})
+            
+        # Draw Food
+        for apple in apples:
+            apple.draw(board)
+            
+         # Check Collisions
+        state.check_food_collision(player1)
+        state.check_food_collision(player2)
+        state.check_player_collision(player1)
+        # state.check_player_collision(player2)
+        
+        # Draw Score Bar
+        scorebar.draw(screen, player1, player2)
         
         # Draw Player Snakes
         player1.snake.move(delta_time)
         player2.snake.move(delta_time)
         player1.snake.draw(board.board)
         player2.snake.draw(board.board)
-            
-        state.check_food_collision(player1)
-        state.check_food_collision(player2)
-        state.check_player_collision(player1)
-        state.check_player_collision(player2)
-        
-        # Draw Food
-        for apple in apples:
-            apple.draw(board)
-        
-        # Draw Score Bar
-        scorebar.draw(screen, player1, player2)
         
         # Render Display
         pygame.display.flip()

@@ -26,10 +26,10 @@ class GameState:
         :type player: Player
         """
         # Check for wall collisions
-        if (player.snake.position["x"] < 0 or 
-            player.snake.position["x"] >= self.board.width or 
-            player.snake.position["y"] < 0 or 
-            player.snake.position["y"] >= self.board.height):
+        if (player.snake.head_position["x"] < 0 or 
+            player.snake.head_position["x"] >= self.board.width or 
+            player.snake.head_position["y"] < 0 or 
+            player.snake.head_position["y"] >= self.board.height):
             self.game_over = True
             self.winner = self.player1 if player == self.player2 else self.player2
             
@@ -44,14 +44,14 @@ class GameState:
         :type player: Player
         """
         for food in self.food_list:
-            if (food.x // config.GRID_SIZE == player.snake.position["x"] // config.GRID_SIZE and 
-                food.y // config.GRID_SIZE == player.snake.position["y"] // config.GRID_SIZE):
+            if (food.x // config.GRID_SIZE == player.snake.head_position["x"] // config.GRID_SIZE and 
+                food.y // config.GRID_SIZE == player.snake.head_position["y"] // config.GRID_SIZE):
                     self.food_list.remove(food)
                     self.occupied[food.x // config.GRID_SIZE][food.y // config.GRID_SIZE] = {}
                     
                     self.food_list.append(Food())
                     self.occupied[self.food_list[-1].x // config.GRID_SIZE][self.food_list[-1].y // config.GRID_SIZE] = self.food_list[-1]
                     
-                    player.snake.length += 1
+                    player.snake.grow()
                     player.score += 1
                 
