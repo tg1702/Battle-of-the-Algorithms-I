@@ -111,15 +111,15 @@ class GameState:
         
         if player1.collided and player2.collided:
             if player1.score == player2.score:
-                self.winner = "Draw"
+                self.winner = None
             elif player1.score > player2.score:
-                self.winner = "Player 1"
+                self.winner = player1
             else:
-                self.winner = "Player 2"
+                self.winner = player2
         elif (player1.collided):
-            self.winner = "Player 2"
+            self.winner = player2
         else: 
-            self.winner = "Player 1"
+            self.winner = player1
             
         return
             

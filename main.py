@@ -3,6 +3,7 @@ from config import config
 import core.board as board, core.scorebar as scorebar, core.player as player, core.food as food
 import core.game_state as game_state
 import colors
+import core.game_over_screen as game_over_screen
 
 pygame.init()
 
@@ -34,6 +35,9 @@ player2 = player.Player(2, "Jenny", board)
 # Game State
 state = game_state.GameState(board, player1, player2)
 apples = state.food_list
+
+# Game Over Screen
+game_over_screen = game_over_screen.GameOverScreen()
 
 while running:
     # Handle Events
@@ -74,10 +78,14 @@ while running:
         for apple in apples:
             apple.draw(board)
             
-         # Check Collisions
+        # Check Food Collisions
         state.check_food_collision(player1)
         state.check_food_collision(player2)
+        
+        # Check collisions for player 1
         state.check_player_collision(player1, player2)
+        
+        # Check collisions for player 2
         state.check_player_collision(player2, player1)
         
         # Draw Score Bar
@@ -88,11 +96,17 @@ while running:
         player2.snake.move(delta_time)
         player1.snake.draw(board.board)
         player2.snake.draw(board.board)
+    
+    else: 
+        # Render Game Over Screen
+        game_over_screen.draw(screen, state.winner)
         
-        # Render Display
-        pygame.display.flip()
+
+    # Render Display
+    pygame.display.flip()
+    
+    # Set Frame Rate
+    clock.tick(config.FPS)
         
-        # Set Frame Rate
-        clock.tick(config.FPS)
     
 pygame.quit()
