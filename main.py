@@ -57,9 +57,30 @@ while running:
                 
             if event.key == pygame.K_UP:
                 player1.snake.direction = "up"
-            
                 
-    if state.game_over == False:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_pos = pygame.mouse.get_pos()
+            width = game_over_screen.restart_button.width
+            height = game_over_screen.restart_button.height
+            restart_x = config.SCREEN_WIDTH/2 - 110
+            restart_y = 520
+            
+            if state.game_over == True:
+                if mouse_pos[0] >= restart_x and mouse_pos[0] <= restart_x + width and mouse_pos[1] >= restart_y and mouse_pos[1] <= restart_y + height:
+                    # Clear Screen
+                    screen.fill("black")
+                    
+                    # Reset State
+                    player1 = player.Player(1, "John", board)
+                    player2 = player.Player(2, "Jenny", board)
+
+                    state.game_over = False
+                    state = game_state.GameState(board, player1, player2)
+                    apples = state.food_list
+                
+                
+                
+    if state.game_over == False:        
         # Calculate Time
         current_time = pygame.time.get_ticks()
         delta_time = current_time - previous_time
@@ -102,7 +123,6 @@ while running:
         # Render Game Over Screen
         game_over_screen.draw(screen, state.winner)
         
-
     # Render Display
     pygame.display.flip()
     

@@ -18,6 +18,7 @@ class GameState:
             self.food_list.append(Food())
             self.occupied[self.food_list[i].x // config.GRID_SIZE][self.food_list[i].y // config.GRID_SIZE] = self.food_list[i]
             
+            
     def check_player_collision(self, player, opponent):
         """
         Checks if the snake has collided with itself or the walls of the board.
@@ -85,7 +86,7 @@ class GameState:
                 player.collided = True
                 self.calculate_winner(self.player1, self.player2)
                 return
-        
+
     
     def check_food_collision(self, player):
         """
@@ -105,6 +106,7 @@ class GameState:
                     
                     player.snake.grow()
                     player.score += 1
+                    
                     
     def calculate_winner(self, player1, player2):
         self.game_over = True
