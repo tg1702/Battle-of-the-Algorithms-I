@@ -34,7 +34,20 @@ class GameState:
             self.winner = self.player1 if player == self.player2 else self.player2
             
         # Check for self-collisions
+        current_head = player.snake.head_position.copy()
         
+        segments = player.snake.body
+        
+        for i in range(1, len(segments)):
+            if (segments[i].position["x"] == current_head["x"] and segments[i].position["y"] == current_head["y"]):
+                self.game_over = True
+                
+                if (player.id == 1):
+                    self.winner = self.player2
+                else:
+                    self.winner = self.player1
+                    
+                print(self.winner)
     
     def check_food_collision(self, player):
         """
