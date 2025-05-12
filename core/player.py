@@ -9,7 +9,8 @@ class Player:
         self.color = getattr(colors, f"player{self.id}_color")
         self.border_color = getattr(colors, f"player{self.id}_border_color")
         self.score = 0
-        self.board = board       
+        self.board = board  
+        self.collided = False     
 
         position = {"x": 0, "y": board.height/2}
         

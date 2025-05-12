@@ -77,8 +77,8 @@ while running:
          # Check Collisions
         state.check_food_collision(player1)
         state.check_food_collision(player2)
-        state.check_player_collision(player1)
-        # state.check_player_collision(player2)
+        state.check_player_collision(player1, player2)
+        state.check_player_collision(player2, player1)
         
         # Draw Score Bar
         scorebar.draw(screen, player1, player2)

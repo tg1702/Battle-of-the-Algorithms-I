@@ -18,36 +18,74 @@ class GameState:
             self.food_list.append(Food())
             self.occupied[self.food_list[i].x // config.GRID_SIZE][self.food_list[i].y // config.GRID_SIZE] = self.food_list[i]
             
-    def check_player_collision(self, player):
+    def check_player_collision(self, player, opponent):
         """
         Checks if the snake has collided with itself or the walls of the board.
         
         :param player: The player whose snake is being checked for collisions
         :type player: Player
         """
+        head_x = player.snake.head_position["x"]
+        head_y = player.snake.head_position["y"]
+        
         # Check for wall collisions
-        if (player.snake.head_position["x"] < 0 or 
-            player.snake.head_position["x"] >= self.board.width or 
-            player.snake.head_position["y"] < 0 or 
-            player.snake.head_position["y"] >= self.board.height):
-            self.game_over = True
-            self.winner = self.player1 if player == self.player2 else self.player2
+        if (head_x < 0 or head_x >= self.board.width or head_y < 0 or head_y >= self.board.height):
+            player.collided = True
+            self.calculate_winner(self.player1, self.player2)
+            return
             
         # Check for self-collisions
-        current_head = player.snake.head_position.copy()
+        next_head_x = head_x
+        next_head_y = head_y
+        direction = player.snake.direction
         
-        segments = player.snake.body
+        if direction == "left":
+            next_head_x -= config.GRID_SIZE
+        elif direction == "right":
+            next_head_x += config.GRID_SIZE
+        elif direction == "up":
+            next_head_y -= config.GRID_SIZE
+        elif direction == "down":
+            next_head_y += config.GRID_SIZE
+            
+        for i in range(len(player.snake.body)):
+            segment = player.snake.body[i]
+            if (segment.position["x"] == next_head_x and segment.position["y"] == next_head_y):
+                self.player.collided = True
+                self.calculate_winner(self.player1, self.player2)
+                return
+            
+        # Check opponent collisions
+        opponent_head_x = opponent.snake.head_position["x"]
+        opponent_head_y = opponent.snake.head_position["y"]
+        opponent_direction = opponent.snake.direction
+        next_opponent_head_x = opponent_head_x
+        next_opponent_head_y = opponent_head_y
+
+        if opponent_direction == "left":
+            next_opponent_head_x -= config.GRID_SIZE
+        elif opponent_direction == "right":
+            next_opponent_head_x += config.GRID_SIZE
+        elif opponent_direction == "up":
+            next_opponent_head_y -= config.GRID_SIZE
+        elif opponent_direction == "down":
+            next_opponent_head_y += config.GRID_SIZE
+
+        # Head on collision
+        if (next_head_x == next_opponent_head_x and next_head_y == next_opponent_head_y):
+            self.player1.collided = True
+            self.player2.collided = True
+            self.calculate_winner(self.player1, self.player2)
+            return
         
-        for i in range(1, len(segments)):
-            if (segments[i].position["x"] == current_head["x"] and segments[i].position["y"] == current_head["y"]):
-                self.game_over = True
-                
-                if (player.id == 1):
-                    self.winner = self.player2
-                else:
-                    self.winner = self.player1
-                    
-                print(self.winner)
+        # Body collision
+        for i in range(len(opponent.snake.body)):
+            segment = opponent.snake.body[i]
+            if (segment.position["x"] == next_head_x and segment.position["y"] == next_head_y):
+                player.collided = True
+                self.calculate_winner(self.player1, self.player2)
+                return
+        
     
     def check_food_collision(self, player):
         """
@@ -67,4 +105,21 @@ class GameState:
                     
                     player.snake.grow()
                     player.score += 1
-                
+                    
+    def calculate_winner(self, player1, player2):
+        self.game_over = True
+        
+        if player1.collided and player2.collided:
+            if player1.score == player2.score:
+                self.winner = "Draw"
+            elif player1.score > player2.score:
+                self.winner = "Player 1"
+            else:
+                self.winner = "Player 2"
+        elif (player1.collided):
+            self.winner = "Player 2"
+        else: 
+            self.winner = "Player 1"
+            
+        return
+            
