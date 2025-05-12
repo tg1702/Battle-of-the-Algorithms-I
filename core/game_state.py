@@ -51,7 +51,7 @@ class GameState:
         for i in range(len(player.snake.body)):
             segment = player.snake.body[i]
             if (segment.position["x"] == next_head_x and segment.position["y"] == next_head_y):
-                self.player.collided = True
+                player.collided = True
                 self.calculate_winner(self.player1, self.player2)
                 return
             

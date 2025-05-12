@@ -57,6 +57,7 @@ while running:
                 
             if event.key == pygame.K_UP:
                 player1.snake.direction = "up"
+            
                 
     if state.game_over == False:
         # Calculate Time
