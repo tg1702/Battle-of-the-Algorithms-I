@@ -28,7 +28,7 @@ previous_time = pygame.time.get_ticks()
 
 # Board Setup
 title_font = pygame.font.SysFont(None, 40)
-title_surface = title_font.render("Battle of the Algorithms", True, "white")
+title_surface = title_font.render("Battle of the Algorithms I", True, "white")
 board = board.Board(board_width, board_height)
 scorebar = scorebar.ScoreBar(350, 100, screen)
 
@@ -60,7 +60,7 @@ while running:
             restart_y = 520
             
             if state.game_over == True:
-                if mouse_pos[0] >= restart_x and mouse_pos[0] <= restart_x + width and mouse_pos[1] >= restart_y and mouse_pos[1] <= restart_y + height:
+                if mouse_pos[0] >= restart_x and mouse_pos[0] <= restart_x + width and mouse_pos[1] >= restart_y and mouse_pos[1] <= restart_y + height:    
                     # Clear Screen
                     screen.fill("black")
                     
@@ -71,6 +71,9 @@ while running:
                     state.game_over = False
                     state = game_state.GameState(board, player1, player2)
                     apples = state.food_list  
+                    
+                    # Reset time
+                    previous_time = pygame.time.get_ticks()
                 
     if state.game_over == False:      
         # Get player 1's move
