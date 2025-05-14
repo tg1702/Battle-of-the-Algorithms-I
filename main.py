@@ -2,7 +2,7 @@ import pygame
 from config import config
 import core.board as board, core.scorebar as scorebar, core.player as player, core.food as food
 import core.game_state as game_state
-import colors
+import config.colors as colors
 import core.game_over_screen as game_over_screen
 
 # Import Controllers

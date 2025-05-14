@@ -21,3 +21,33 @@ A week-long AI coding tournament where developers compete by programming intelli
 
 4. Run SnakeAI
 ```python -m snakeai```
+
+## Documentation
+- [Controller API](docs/controller_api.md) – Understand how to implement your AI logic
+- [Competition Brief](docs/competition_brief.md) – Overview of the tournament rules and game design
+
+## File Structure
+```plaintext
+snakeai/
+├── config/
+│   ├── config.py
+│   └── colors.py
+├── core/
+│   ├── board.py
+│   ├── food.py
+│   ├── game_over_screen.py
+│   ├── game_state.py
+│   ├── player.py
+│   ├── scorebar.py
+│   └── snake.py
+├── controllers/
+│   ├── player1_controller.py
+│   ├── player2_controller.py
+│   └── example.py
+├── docs/
+│   ├── controller_api.md
+│   └── competition_brief.md
+├── main.py
+├── README.md
+└── requirements.txt
+```

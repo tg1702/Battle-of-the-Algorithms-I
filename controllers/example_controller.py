@@ -38,3 +38,6 @@ def get_next_move(board_state, player_state, opponent_state):
         return "left"
     else:
         return direction  # Stay in the same direction if no safe moves
+    
+def set_player_name():
+    return "Player Name"

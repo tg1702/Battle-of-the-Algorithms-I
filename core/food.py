@@ -1,6 +1,6 @@
 import random
 import pygame
-import colors
+import config.colors as colors
 from config import config
 
 class Food:

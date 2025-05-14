@@ -1,6 +1,6 @@
 from config import config
 import pygame
-import colors
+import config.colors as colors
 
 class GameOverScreen:
     """
