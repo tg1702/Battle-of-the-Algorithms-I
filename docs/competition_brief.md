@@ -1,6 +1,6 @@
 # Introduction
 
-The **Battle of the Algorithms** is an exhilarating week-long coding tournament that tests and celebrates developers' skills. Eight talented participants will compete head-to-head, striving to craft the most efficient and effective algorithms. Each developer will receive a standardized User Interface (UI) and Application Programming Interface (API) to integrate their solutions. The competition follows an elimination-style format, with contestants facing off in pairs until one emerges as the ultimate champion.
+The **Battle of the Algorithms** is an exhilarating week-long coding tournament that tests and celebrates developers' skills. Eight talented participants will compete head-to-head, striving to craft the most efficient and effective algorithms. Each developer will receive a standardized User Interface (UI) and Application Programming Interface (API) to integrate their solutions. The competition follows an elimination-style format, with contestants facing off in pairs until one emerges as the ultimate champion!
 
 ## Rules
 
@@ -31,9 +31,11 @@ Participants will program an AI version of the classic **Snake game**, where the
 #### Food Placement
 - Food ("apples") will spawn in varying quantities and locations on the grid.
 - Multiple apples can spawn at a time.
+- There will always be a minimum 3 apples on the grid.
+- When an apple is collected, a new one will spawn in a random location.
 
 #### Snake Collisions
-- Developers must implement collision avoidance strategies to prevent the snake from hitting walls, obstacles, or rival snakes.
+- Developers must implement collision avoidance strategies to prevent the snake from hitting walls, obstacles, or rival snakes, while prioritizing food collection.
 
 ## Game Ending Rules
 
@@ -43,7 +45,6 @@ Participants will program an AI version of the classic **Snake game**, where the
 
 ### Collision-Based
 - If a snake collides with an obstacle, wall, or another snake, it loses - regardless of the food count.
-- If two snakes collide head-on, the snake with the most food wins.
 
 ### Time-Based
 - Each round will terminate after **5 minutes**.
@@ -55,48 +56,45 @@ Participants will program an AI version of the classic **Snake game**, where the
 - The snake that collects the food first or survives the longest without collision will be declared the winner.
 
 ### Technical Failure
-- If a participant’s algorithm crashes or behaves in a manner inconsistent with the rules, their snake is disqualified unless it is proven to be a technical fault unrelated to their code.
+- If a participant’s algorithm crashes or behaves in a manner inconsistent with the rules, their snake will be disqualified unless it is proven to be a technical fault unrelated to their code.
 
 ## Algorithm Submission
 
 To participate in the **Battle of the Algorithms**, each developer will need to submit their AI algorithm as a Python script that can be executed by the backend during match execution. Here are the key steps for submitting and integrating your algorithm into the tournament:
 
 ### File Format
-- Participants must submit their AI algorithm in **Python script format** (e.g., `player_name_algorithm.py`).
-- The algorithm must be implemented as a **Python function or class** that interacts with the provided game state and returns a valid move for the snake (`up`, `down`, `left`, `right`).
+- Participants must submit their AI algorithm in **Python script format**.
+- The algorithm must utilize the provided **API** in the [Controller API Documentation](docs/controller_api.md) to interact with the game environment and make decisions based on the game state.
+
+### File Naming Convention
+- To avoid confusion, all algorithm files must follow a specific **naming convention**:
+  - **Format**: `name_algorithm.py` (e.g., `alice_algorithm.py`).
+  - This ensures easy identification and organization of submitted algorithms.
+
 
 ### Submission Method
-- Players will send their algorithm file to the organizer via **GitHub repository, email, or other file-sharing platforms**.
-- The file should be named clearly to identify the developer (e.g., `player_name_algorithm.py`).
+- Players will send their algorithm file to the organizer via the following submission form: [File Submission](https://forms.gle/xHtAgJYsiFmvfpkc7).
+- The file should be named clearly to identify the developer, following the naming convention mentioned above.
+- No submissions will be accepted after the final deadline.
 
 ### API Integration
-- The algorithm must adhere to the standardized **API** provided by the competition. Specifically, it should include:
-  - A function to receive the **current game state** (e.g., snake positions, food, obstacles) and process this information.
+- The algorithm must adhere to the standardized **API** provided by the competition in the [Controller API Documentation](docs/controller_api.md). Specifically, it should include:
   - A function to return the **next move** for the snake based on the game state.
-- The **backend** will dynamically load and execute the algorithm files. It will pass the current game state to the algorithm and retrieve the next move (`up`, `down`, `left`, `right`) from the AI algorithm.
+  - A function to return the **name** of the player.
 
 ### Algorithm Behavior
 - The algorithm should implement **survival and food collection strategies**, prioritizing staying alive while collecting food efficiently.
 - It should avoid hitting **walls, obstacles, and rival snakes**, while navigating the grid and making strategic decisions.
-- The algorithm **will not have access to the game visuals** but will only interact with the game state passed via the backend API.
+- The algorithm **will not have access to the game visuals** but will only interact with the game state passed to the controller.
 
 ### Testing and Debugging
-- Before the tournament, it’s recommended to **test your algorithm** using the game setup provided. The algorithm should be able to run without errors and handle different game scenarios (**e.g., food collection, collision detection**).
-- If there are errors in the algorithm, the player will be notified, and a chance to **fix the issue** may be provided before the match begins.
+- Before the tournament, it’s recommended to **test your algorithm** using the game setup provided.
+- If there are errors in the final submission, the player will be notified, and a chance to **fix the issue** may be provided before the match begins - up to one day after the deadline.
 
 ### Algorithm Safety
-- If an algorithm **crashes or behaves incorrectly** (e.g., infinite loops or inconsistent rules), the snake will be **disqualified** from the round unless proven to be a technical fault unrelated to the code.
+- If an algorithm **crashes or behaves incorrectly** (e.g., infinite loops or inconsistent rules), the snake will be **disqualified** from the round unless proven to be a technical fault unrelated to the submitted algorithm.
 
-### File Naming Convention
-- To avoid confusion, all algorithm files must follow a specific **naming convention**:
-  - **Format**: `player_name_algorithm.py` (e.g., `alice_algorithm.py`).
-  - This ensures easy identification and organization of submitted algorithms.
 
 ### Submission Deadline
 - All algorithm submissions **must be received before the final tournament starts**.
 - **Late submissions will not be accepted**, and players will be disqualified.
-
-### File Uploading
-- Once the organizer has received the algorithm files, they will manually reference the file paths and **initiate the matches via the backend system**.
-- The backend will **"plug and play"** these files by loading them into the system and executing them against the game environment during matches.
-
