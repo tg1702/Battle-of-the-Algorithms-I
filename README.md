@@ -10,16 +10,23 @@ A week-long AI coding tournament where developers compete by programming intelli
 - 🔗 **Standardized API** – Integrate your AI seamlessly into the game environment  
 
 ## Getting Started
-1. Setup Virtual Environment
+### Documentation Review
+Before diving into the code, it's crucial to familiarize yourself with the tournament's rules and game design. The [Competition Brief](docs/competition_brief.md) outlines the objectives, rules, and guidelines for participation. When you're ready to implement your AI, refer to the [Controller API documentation](docs/controller_api.md) for details on how to create your snake's controller.
+
+### Installation
+1. Clone the Repository
+```git clone https://github.com/TaigaTi/Battle-of-the-Algorithms-I.git```
+
+2. Setup Virtual Environment
 ```python -m venv venv```
 
-2. Start Virtual Environment
+3. Start Virtual Environment
 ```.\venv\Scripts\Activate```
 
-3. Install Requirements
+4. Install Requirements
 ```pip install -r requirements.txt```
 
-4. Run SnakeAI
+5. Run SnakeAI
 ```python -m main```
 
 ## Documentation
