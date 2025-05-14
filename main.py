@@ -1,9 +1,13 @@
-import pygame, time
+import pygame
 from config import config
 import core.board as board, core.scorebar as scorebar, core.player as player, core.food as food
 import core.game_state as game_state
 import colors
 import core.game_over_screen as game_over_screen
+
+# Import Controllers
+import controllers.player1_controller as player1_controller_path
+import controllers.player2_controller as player2_controller_path
 
 pygame.init()
 
@@ -29,8 +33,11 @@ board = board.Board(board_width, board_height)
 scorebar = scorebar.ScoreBar(350, 100, screen)
 
 # Initialize Players
-player1 = player.Player(1, "John", board)
-player2 = player.Player(2, "Jenny", board)
+player1_controller_module = "controllers.player1_controller"
+player2_controller_module = "controllers.player2_controller"
+
+player1 = player.Player(1, "John", board, player1_controller_module)
+player2 = player.Player(2, "Jenny", board, player2_controller_module)
 
 # Game State
 state = game_state.GameState(board, player1, player2)
@@ -44,19 +51,6 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-            
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:
-                player1.snake.direction = "left"
-                
-            if event.key == pygame.K_RIGHT:
-                player1.snake.direction = "right"
-                
-            if event.key == pygame.K_DOWN:
-                player1.snake.direction = "down"
-                
-            if event.key == pygame.K_UP:
-                player1.snake.direction = "up"
                 
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = pygame.mouse.get_pos()
@@ -71,16 +65,25 @@ while running:
                     screen.fill("black")
                     
                     # Reset State
-                    player1 = player.Player(1, "John", board)
-                    player2 = player.Player(2, "Jenny", board)
+                    player1 = player.Player(1, "John", board, player1_controller_module)
+                    player2 = player.Player(2, "Jenny", board, player2_controller_module)
 
                     state.game_over = False
                     state = game_state.GameState(board, player1, player2)
-                    apples = state.food_list
+                    apples = state.food_list  
                 
-                
-                
-    if state.game_over == False:        
+    if state.game_over == False:      
+        # Get player 1's move
+        p1_direction = player1.get_next_direction(state)
+        if p1_direction in ["left", "right", "up", "down"]:
+            player1.snake.direction = p1_direction
+
+        # Get player 2's move
+        p2_direction = player2.get_next_direction(state)
+        if p2_direction in ["left", "right", "up", "down"]:
+            player2.snake.direction = p2_direction
+        
+          
         # Calculate Time
         current_time = pygame.time.get_ticks()
         delta_time = current_time - previous_time
