@@ -36,8 +36,8 @@ scorebar = scorebar.ScoreBar(350, 100, screen)
 player1_controller_module = "controllers.player1_controller"
 player2_controller_module = "controllers.player2_controller"
 
-player1 = player.Player(1, "John", board, player1_controller_module)
-player2 = player.Player(2, "Jenny", board, player2_controller_module)
+player1 = player.Player(1, board, player1_controller_module)
+player2 = player.Player(2, board, player2_controller_module)
 
 # Game State
 state = game_state.GameState(board, player1, player2)
@@ -65,8 +65,8 @@ while running:
                     screen.fill("black")
                     
                     # Reset State
-                    player1 = player.Player(1, "John", board, player1_controller_module)
-                    player2 = player.Player(2, "Jenny", board, player2_controller_module)
+                    player1 = player.Player(1, board, player1_controller_module)
+                    player2 = player.Player(2, board, player2_controller_module)
 
                     state.game_over = False
                     state = game_state.GameState(board, player1, player2)

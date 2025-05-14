@@ -5,9 +5,9 @@ import importlib.util
 import sys
 
 class Player: 
-    def __init__(self, id, name, board, controller_path):
+    def __init__(self, id, board, controller_path):
         self.id = id
-        self.name = name
+        self.name = ""
         self.color = getattr(colors, f"player{self.id}_color")
         self.border_color = getattr(colors, f"player{self.id}_border_color")
         self.score = 0
@@ -24,6 +24,7 @@ class Player:
             self.snake.direction = "left"
             
         self.controller = self._load_controller(controller_path)
+        self.name = self.controller.set_player_name()
         
     def _load_controller(self, controller_module_name):
         """Loads the player's controller file."""
