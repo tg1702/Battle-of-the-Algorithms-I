@@ -20,11 +20,11 @@ A week-long AI coding tournament where developers compete by programming intelli
 ```pip install -r requirements.txt```
 
 4. Run SnakeAI
-```python -m snakeai```
+```python -m main```
 
 ## Documentation
-- [Controller API](docs/controller_api.md) – Understand how to implement your AI logic
 - [Competition Brief](docs/competition_brief.md) – Overview of the tournament rules and game design
+- [Controller API](docs/controller_api.md) – Understand how to implement your AI logic
 
 ## File Structure
 ```plaintext
