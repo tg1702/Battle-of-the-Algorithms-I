@@ -77,15 +77,3 @@ def get_next_move(board_state, player_state, opponent_state):
                 return "up"
 
     return possible_moves[0]  # If no food-directed move, take the first safe move
-
-
-if __name__ == '__main__':
-    # Example of how the function might be used (not part of the game loop)
-    config = type("Config", (), {"GRID_SIZE": 20})
-    board = {"width": 600, "height": 480, "food_locations": [(100, 100), (200, 300)]}
-    player = {"head_position": {"x": 50, "y": 50}, "direction": "right",
-              "body": [{"x": 50, "y": 50}, {"x": 40, "y": 50}], "score": 0}
-    opponent = {"head_position": {"x": 200, "y": 50}, "direction": "left",
-                "body": [{"x": 200, "y": 50}], "score": 0}
-    next_move = get_next_move(board, player, opponent)
-    print(f"Next move for Player 1: {next_move}")
