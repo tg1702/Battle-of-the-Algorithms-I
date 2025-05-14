@@ -40,4 +40,10 @@ def get_next_move(board_state, player_state, opponent_state):
         return direction  # Stay in the same direction if no safe moves
     
 def set_player_name():
-    return "Player Name"
+    """
+    Sets the player's name.
+
+    Returns:
+        str: The name of the player as a string.
+    """
+    return "Your Name"
