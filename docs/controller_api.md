@@ -100,7 +100,7 @@ Below is a detailed description of the data provided in the input dictionaries:
 
 * `"score"` (int): The current score of the opponent.
 
-### Return Value
+#### Return Value
 
 The `get_next_move` function must return a string representing the direction the snake should move. The string must be one of the following:
 
@@ -121,5 +121,7 @@ Each controller file must define a function named `set_player_name` with the fol
 def set_player_name():
     return "Your Name"
 ```
-This function is called by the game engine to set the name of the snake. The name should be a string and can be any valid Python string.
+This function is called by the game engine to set the name of the snake. 
 
+#### Return Value
+The `set_player_name` function must return a string representing the name of the player. The string can be any valid Python string, but it should not contain any special characters or spaces.
