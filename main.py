@@ -1,6 +1,6 @@
 import pygame
 from config import config
-import core.board as board, core.scorebar as scorebar, core.player as player, core.food as food
+import core.board as board, core.scorebar as scorebar, core.player as player
 import core.game_state as game_state
 import config.colors as colors
 import core.game_over_screen as game_over_screen
@@ -25,6 +25,11 @@ pygame.display.set_caption(config.TITLE)
 # Setup Time
 clock = pygame.time.Clock()
 previous_time = pygame.time.get_ticks()
+
+# Timer Setup
+game_start_time = pygame.time.get_ticks()
+max_game_duration = 5 * 60 * 1000  # 5 minutes in milliseconds
+timer_font = pygame.font.SysFont(None, 36)
 
 # Board Setup
 title_font = pygame.font.SysFont(None, 40)
@@ -72,10 +77,19 @@ while running:
                     state = game_state.GameState(board, player1, player2)
                     apples = state.food_list  
                     
-                    # Reset time
+                    # Reset time variables
                     previous_time = pygame.time.get_ticks()
+                    game_start_time = pygame.time.get_ticks()
                 
     if state.game_over == False:      
+        #  Check Elapsed Time
+        elapsed_time = pygame.time.get_ticks() - game_start_time
+        if elapsed_time >= max_game_duration:
+            state.game_over = True
+            state.time_up = True
+            state.calculate_winner(player1, player2)
+            continue
+
         # Get player 1's move
         p1_direction = player1.get_next_direction(state)
         if p1_direction in ["left", "right", "up", "down"]:
@@ -86,7 +100,6 @@ while running:
         if p2_direction in ["left", "right", "up", "down"]:
             player2.snake.direction = p2_direction
         
-          
         # Calculate Time
         current_time = pygame.time.get_ticks()
         delta_time = current_time - previous_time
@@ -98,6 +111,13 @@ while running:
 
         # Render Text
         screen.blit(title_surface, (screen_width/2 - 165, 50))
+        
+        # Draw Timer
+        minutes = elapsed_time // 60000
+        seconds = (elapsed_time % 60000) // 1000
+        timer_text = f"{minutes:02}:{seconds:02}"
+        timer_surface = timer_font.render(timer_text, True, "white")
+        screen.blit(timer_surface, (20, 20))
         
         player1.draw_score(screen, {"x": 150, "y": 100})
         player2.draw_score(screen, {"x": screen_width - 270, "y": 100})
@@ -135,5 +155,4 @@ while running:
     # Set Frame Rate
     clock.tick(config.FPS)
         
-    
 pygame.quit()

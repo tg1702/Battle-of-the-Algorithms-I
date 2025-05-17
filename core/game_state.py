@@ -10,6 +10,7 @@ class GameState:
         self.occupied = [[{} for _ in range(self.rows)] for _ in range(self.cols)]
         self.food_list = []
         self.game_over = False
+        self.time_up = False
         self.player1 = player1
         self.player2 = player2
         self.winner = None
@@ -111,7 +112,7 @@ class GameState:
     def calculate_winner(self, player1, player2):
         self.game_over = True
         
-        if player1.collided and player2.collided:
+        if (player1.collided and player2.collided) or self.time_up:
             if player1.score == player2.score:
                 self.winner = None
             elif player1.score > player2.score:
