@@ -16,6 +16,16 @@ class GameState:
         self.winner = None
         
         for i in range(0, 3):
+            while True:
+                food = Food()
+                food_position = (food.x // config.GRID_SIZE, food.y // config.GRID_SIZE)
+
+                occupied_positions = {(segment.position["x"] // config.GRID_SIZE, segment.position["y"] // config.GRID_SIZE) 
+                                    for segment in self.player1.snake.body + self.player2.snake.body}
+
+                if food_position not in occupied_positions:
+                    break
+
             self.food_list.append(Food())
             self.occupied[self.food_list[i].x // config.GRID_SIZE][self.food_list[i].y // config.GRID_SIZE] = self.food_list[i]
             
