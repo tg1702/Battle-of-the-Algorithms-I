@@ -45,7 +45,8 @@ player2 = player.Player(2, game_board, player2_controller_module)
 
 # Game State
 state = game_state.GameState(game_board, player1, player2)
-apples = state.food_list
+apples = state.food_locations
+obstacles = state.obstacle_locations
 
 # Game Over Screen
 game_over_screen = game_over_screen.GameOverScreen()
@@ -92,11 +93,12 @@ def restart_game():
     """
     Restarts the game by reinitializing the game state and players.
     """
-    global player1, player2, state, apples, game_start_time, last_ai_update_time
+    global player1, player2, state, apples, obstacles, game_start_time, last_ai_update_time
     player1 = player.Player(1, game_board, player1_controller_module)
     player2 = player.Player(2, game_board, player2_controller_module)
     state = game_state.GameState(game_board, player1, player2)
-    apples = state.food_list
+    apples = state.food_locations
+    obstacles = state.obstacle_locations
     game_start_time = pygame.time.get_ticks()
     last_ai_update_time = pygame.time.get_ticks()
 
@@ -147,7 +149,7 @@ while running:
                 "height": game_board.height,
                 "rows": game_board.rows,
                 "cols": game_board.cols,
-                "food_locations": [(food.x, food.y) for food in state.food_list],
+                "food_locations": [(food.x, food.y) for food in state.food_locations],
             }
 
             # Get Player States
@@ -222,6 +224,10 @@ while running:
     # Draw Apples
     for apple in apples:
         apple.draw(game_board)
+        
+    # Draw Obstacles
+    for obstacle in obstacles:
+        obstacle.draw(game_board)
 
     # Draw Snakes
     player1.snake.draw(game_board.board)

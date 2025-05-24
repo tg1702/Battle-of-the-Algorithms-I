@@ -1,4 +1,4 @@
-## Player Controller API Documentation
+# Player Controller API Documentation
 
 The player controller API defines how your snake's AI communicates with the game engine. Your controller must be implemented as a Python file (e.g., `player1_controller.py`) located in the `controllers/` directory.
 
@@ -7,7 +7,7 @@ Player controller files are Python files that contain the logic for how a snake 
 
 For example, a controller for player 1 would typically be named `player1_controller.py`, and a controller for player 2 would be named `player2_controller.py`.
 
-# Controller File Structure
+## Controller File Structure
 The controller files are structured to allow you to implement your own logic for the snake's behavior. The game engine will call the functions defined in these files to determine the snake's next move based on the current game state.
 
 There are 3 player controller files in the `controllers/` directory:
@@ -52,6 +52,8 @@ Below is a detailed description of the data provided in the input dictionaries:
 * `"height"` (int): The height of the game board in pixels.
 
 * `"food_locations"` (list of tuples): A list of tuples, where each tuple `(food_x, food_y)` represents the x and y coordinates (in pixels) of a food item on the board.
+
+* `"obstacle_locations"` (list of tuples): A list of tuples, where each tuple (obs_x, obs_y) represents the x and y coordinates (in pixels) of an obstacle on the board. Snakes must avoid these cells.
 
 * `"player1_body"` (list of dicts): A list representing the segments of player 1's snake's body. Each element in the list is a dictionary with the following structure:
 
@@ -125,3 +127,22 @@ This function is called by the game engine to set the name of the snake.
 
 #### Return Value
 The `set_player_name` function must return a string representing the name of the player. The string can be any valid Python string, but it should not contain any special characters or spaces.
+
+## Algorithm Guidelines
+- **Time Limit**:
+Your algorithm must return the next move within 50 milliseconds. If your algorithm does not respond within this limit, the snake will automatically continue moving in its previous direction. Optimize your code to run efficiently within this constraint.
+
+- **Game Grid**:
+The game is based on a fixed-size grid. To reference the size of each grid cell, use the GRID_SIZE constant defined in config/config.py. All snake positions, food, and obstacles align to this grid.
+
+- **Move Format**:
+Your algorithm should output one of the following moves as a string: "up", "down", "left", or "right". Moves must correspond to valid grid directions.
+
+- **Initial Direction**:
+The snake starts moving in an initial direction. If no move is returned on the first turn, it will continue moving in that initial direction.
+
+- **Valid Moves**:
+The snake cannot directly reverse direction (e.g., from "left" to "right" immediately). Such moves should be avoided as they may be ignored or cause the snake to collide with itself.
+
+- **Determinism**:
+The game environment is fully deterministic, with no random factors influencing snake movement during a turn. All snake movements are controlled by your algorithm, except for the initial starting direction.

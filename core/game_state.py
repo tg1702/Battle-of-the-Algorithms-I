@@ -1,6 +1,7 @@
 from config import config
 from core.player import Player
 from core.food import Food
+from core.obstacle import Obstacle
 
 class GameState:
     """
@@ -12,7 +13,8 @@ class GameState:
         self.rows = self.board.rows
         self.cols = self.board.cols
         self.occupied = [[{} for _ in range(self.rows)] for _ in range(self.cols)]
-        self.food_list = []
+        self.food_locations = []
+        self.obstacle_locations = []
         self.game_over = False
         self.time_up = False
         self.player1 = player1 
@@ -31,14 +33,41 @@ class GameState:
                     occupied_positions.add((segment.position["x"] // config.GRID_SIZE, segment.position["y"] // config.GRID_SIZE))
                 for segment in self.player2.snake.body:
                     occupied_positions.add((segment.position["x"] // config.GRID_SIZE, segment.position["y"] // config.GRID_SIZE))
-                for existing_food in self.food_list:
+                for existing_food in self.food_locations:
                     occupied_positions.add((existing_food.x // config.GRID_SIZE, existing_food.y // config.GRID_SIZE))
 
                 if food_position_grid not in occupied_positions:
-                    self.food_list.append(new_food)
+                    self.food_locations.append(new_food)
                     self.occupied[new_food.x // config.GRID_SIZE][new_food.y // config.GRID_SIZE] = new_food
                     break
+            
+        # Initialize obstacles on the board
+        for _ in range(5):
+            while True:
+                new_obstacle = Obstacle()
+                obstacle_positions = new_obstacle.get_occupied_positions()  # must return grid positions
 
+                # Gather all occupied positions
+                occupied_positions = set()
+                for segment in self.player1.snake.body:
+                    gx, gy = segment.position["x"] // config.GRID_SIZE, segment.position["y"] // config.GRID_SIZE
+                    occupied_positions.add((gx, gy))
+                for segment in self.player2.snake.body:
+                    gx, gy = segment.position["x"] // config.GRID_SIZE, segment.position["y"] // config.GRID_SIZE
+                    occupied_positions.add((gx, gy))
+                for food in self.food_locations:
+                    gx, gy = food.x // config.GRID_SIZE, food.y // config.GRID_SIZE
+                    occupied_positions.add((gx, gy))
+                for obs in self.obstacle_locations:
+                    occupied_positions.update(obs.get_occupied_positions())
+
+                if not any(pos in occupied_positions for pos in obstacle_positions):
+                    self.obstacle_locations.append(new_obstacle)
+                    for (x, y) in obstacle_positions:
+                        self.occupied[x][y] = new_obstacle  # note: occupied[y][x]
+                    break
+
+            
     def check_player_collision(self, player, opponent):
         """
         Checks if the player's snake collides with walls, itself, or the opponent.
@@ -57,14 +86,16 @@ class GameState:
         # Self collision
         for i in range(1, len(player.snake.body)):
             segment = player.snake.body[i]
-            if (segment.position["x"] == head_x and segment.position["y"] == head_y):
+            if (segment.position["x"] // config.GRID_SIZE == head_x // config.GRID_SIZE and
+                segment.position["y"] // config.GRID_SIZE == head_y // config.GRID_SIZE):
                 player.collided = True
                 self.calculate_winner(self.player1, self.player2)
                 return
             
         # Collision with opponent's body
         for segment in opponent.snake.body:
-            if (segment.position["x"] == head_x and segment.position["y"] == head_y):
+            if (segment.position["x"] // config.GRID_SIZE == head_x // config.GRID_SIZE and
+                segment.position["y"] // config.GRID_SIZE == head_y // config.GRID_SIZE):
                 player.collided = True
                 self.calculate_winner(self.player1, self.player2)
                 return
@@ -73,11 +104,24 @@ class GameState:
         opponent_head_x = opponent.snake.head_position["x"]
         opponent_head_y = opponent.snake.head_position["y"]
 
-        if (head_x == opponent_head_x and head_y == opponent_head_y):
+        if (head_x // config.GRID_SIZE == opponent_head_x // config.GRID_SIZE and
+            head_y // config.GRID_SIZE == opponent_head_y // config.GRID_SIZE):
             self.player1.collided = True
             self.player2.collided = True
             self.calculate_winner(self.player1, self.player2)
             return
+        
+        # Obstacle collision
+        head_x = player.snake.head_position["x"]
+        head_y = player.snake.head_position["y"]
+        head_grid = (head_x // config.GRID_SIZE, head_y // config.GRID_SIZE)
+
+        for obstacle in self.obstacle_locations:
+            if head_grid in obstacle.get_occupied_positions():  # must be grid-based
+                player.collided = True
+                self.calculate_winner(self.player1, self.player2)
+                return
+
         
     def check_food_collision(self, player):
         """
@@ -85,10 +129,10 @@ class GameState:
         If so, remove that food and spawn a new one in an unoccupied spot.
         The player's snake grows and score increases by 1.
         """
-        for food in list(self.food_list):  # Iterate over a copy to allow removal
+        for food in list(self.food_locations):  # Iterate over a copy to allow removal
             if (food.x // config.GRID_SIZE == player.snake.head_position["x"] // config.GRID_SIZE and 
                 food.y // config.GRID_SIZE == player.snake.head_position["y"] // config.GRID_SIZE):
-                self.food_list.remove(food)
+                self.food_locations.remove(food)
                 self.occupied[food.x // config.GRID_SIZE][food.y // config.GRID_SIZE] = {}
 
                 # Spawn new food avoiding snakes and existing food
@@ -101,13 +145,13 @@ class GameState:
                         occupied_positions.add((seg.position["x"] // config.GRID_SIZE, seg.position["y"] // config.GRID_SIZE))
                     for seg in self.player2.snake.body:
                         occupied_positions.add((seg.position["x"] // config.GRID_SIZE, seg.position["y"] // config.GRID_SIZE))
-                    for existing_food in self.food_list:
+                    for existing_food in self.food_locations:
                         occupied_positions.add((existing_food.x // config.GRID_SIZE, existing_food.y // config.GRID_SIZE))
 
                     if new_food_position_grid not in occupied_positions:
                         break
 
-                self.food_list.append(new_food)
+                self.food_locations.append(new_food)
                 self.occupied[new_food.x // config.GRID_SIZE][new_food.y // config.GRID_SIZE] = new_food
                 
                 player.snake.grow()
