@@ -98,7 +98,6 @@ To participate in the **Battle of the Algorithms**, each developer will need to 
 ### Algorithm Safety
 - If an algorithm **crashes or behaves incorrectly** (e.g., infinite loops or inconsistent rules), the snake will be **disqualified** from the round unless proven to be a technical fault unrelated to the submitted algorithm.
 
-
 ### Submission Deadline
 - All algorithm submissions **must be received before the final tournament starts**.
 - **Late submissions will not be accepted**, and players will be disqualified.

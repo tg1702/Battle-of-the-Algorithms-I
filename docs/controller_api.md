@@ -12,7 +12,7 @@ The controller files are structured to allow you to implement your own logic for
 
 There are 3 player controller files in the `controllers/` directory:
 - player1_controller.py
-- player2_contoller.py 
+- player2_controller.py 
 - example.py
 
 The `example.py` file is provided as a template for you to create your own controller. You can use this as a starting point for your own logic. It contains example functions and comments to help you understand how to implement your AI.

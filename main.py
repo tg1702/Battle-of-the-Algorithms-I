@@ -204,7 +204,6 @@ while running:
             if state.game_over:
                 continue
             
-        
     # Render Screen
     screen.fill(colors.background_color)
     game_board.draw(screen)
