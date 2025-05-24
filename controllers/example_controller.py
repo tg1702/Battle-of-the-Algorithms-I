@@ -46,4 +46,4 @@ def set_player_name():
     Returns:
         str: The name of the player as a string.
     """
-    return "Your Name"
+    return "Example"
