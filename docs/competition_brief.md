@@ -76,7 +76,7 @@ To participate in the **Battle of the Algorithms**, each developer will need to 
   - This ensures easy identification and organization of submitted algorithms.
 
 ### Algorithm Behaviour
-- Please review the [Algorithm Guidelines](algorithm_guidlines.md) before diving into development.
+- Please review the [Algorithm Guidelines](algorithm_guidelines.md) before diving into development.
 - If an algorithm **crashes or behaves incorrectly** (e.g., infinite loops or inconsistent rules), the snake will be **disqualified** from the round unless proven to be a technical fault unrelated to the submitted algorithm.
 
 ### Testing and Debugging
