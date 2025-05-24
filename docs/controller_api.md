@@ -127,22 +127,3 @@ This function is called by the game engine to set the name of the snake.
 
 #### Return Value
 The `set_player_name` function must return a string representing the name of the player. The string can be any valid Python string, but it should not contain any special characters or spaces.
-
-## Algorithm Guidelines
-- **Time Limit**:
-Your algorithm must return the next move within 50 milliseconds. If your algorithm does not respond within this limit, the snake will automatically continue moving in its previous direction. Optimize your code to run efficiently within this constraint.
-
-- **Game Grid**:
-The game is based on a fixed-size grid. To reference the size of each grid cell, use the GRID_SIZE constant defined in config/config.py. All snake positions, food, and obstacles align to this grid.
-
-- **Move Format**:
-Your algorithm should output one of the following moves as a string: "up", "down", "left", or "right". Moves must correspond to valid grid directions.
-
-- **Initial Direction**:
-The snake starts moving in an initial direction. If no move is returned on the first turn, it will continue moving in that initial direction.
-
-- **Valid Moves**:
-The snake cannot directly reverse direction (e.g., from "left" to "right" immediately). Such moves should be avoided as they may be ignored or cause the snake to collide with itself.
-
-- **Determinism**:
-The game environment is fully deterministic, with no random factors influencing snake movement during a turn. All snake movements are controlled by your algorithm, except for the initial starting direction.

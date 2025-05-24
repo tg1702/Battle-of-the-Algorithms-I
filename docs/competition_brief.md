@@ -51,7 +51,7 @@ Participants will program an AI version of the classic **Snake game**, where the
 - If the time expires before a collision occurs, the snake with the highest food count at the time of expiration wins.
 
 ### AI Decision Time Limit
-- Each AI has a **1-second time limit** to choose a new direction for the snake's movement.
+- Each AI has a **50 milliseconds time limit** to choose a new direction for the snake's movement.
 - If a direction is not chosen within this time, the snake will continue moving in the previous direction.
 
 ### Sudden Death
@@ -65,6 +65,7 @@ Participants will program an AI version of the classic **Snake game**, where the
 ## Algorithm Submission
 
 To participate in the **Battle of the Algorithms**, each developer will need to submit their AI algorithm as a Python script that can be executed by the backend during match execution. Here are the key steps for submitting and integrating your algorithm into the tournament:
+
 
 ### File Format
 - Participants must submit their AI algorithm in **Python script format**.
@@ -87,9 +88,17 @@ To participate in the **Battle of the Algorithms**, each developer will need to 
   - A function to return the **name** of the player.
 
 ### Algorithm Behavior
-- The algorithm should implement **survival and food collection strategies**, prioritizing staying alive while collecting food efficiently.
-- It should avoid hitting **walls, obstacles, and rival snakes**, while navigating the grid and making strategic decisions.
-- The algorithm **will not have access to the game visuals** but will only interact with the game state passed to the controller.
+Please review the [Algorithm Guidelines](docs/algorithm_guidelines.md) before diving into development. 
+
+### Use of AI-Assisted Coding Tools
+You are welcome to use AI-based tools (such as GitHub Copilot, ChatGPT, or similar assistants) to help write or optimize your algorithm. 
+
+**However, please use AI wisely and responsibly:**
+- **Understand your code:** You are responsible for any algorithm you submit. Make sure you fully understand and can explain how your code works.
+- **Originality:** Do not simply copy large sections of unreviewed or unedited code from AI without verifying its correctness, efficiency, and compliance with competition rules.
+- **Debugging:** Test, review, and debug any AI-generated code thoroughly before submitting.
+
+The goal is to celebrate your problem-solving and programming skills. AI is a tool to assist—not a replacement for your own creativity and judgment.
 
 ### Testing and Debugging
 - Before the tournament, it’s recommended to **test your algorithm** using the game setup provided.
@@ -98,6 +107,18 @@ To participate in the **Battle of the Algorithms**, each developer will need to 
 ### Algorithm Safety
 - If an algorithm **crashes or behaves incorrectly** (e.g., infinite loops or inconsistent rules), the snake will be **disqualified** from the round unless proven to be a technical fault unrelated to the submitted algorithm.
 
-### Submission Deadline
+### Code Submission Deadline
 - All algorithm submissions **must be received before the final tournament starts**.
 - **Late submissions will not be accepted**, and players will be disqualified.
+
+## Competition Timeline
+- 👩🏾‍💻 Coding Begins: May 25th @ 3pm
+- 🗃 Coding Ends: May 31st @ 3pm
+- 👾 Live Tournament: June 7th @ 6pm on Discord
+- 👑 Winner Announced: June 7th (End of Live Tournament)
+- 📹 Video Submissions: June  7th @ 11pm
+
+## Video Submissions
+After submissions close, each contestant will be asked to submit a short video introducing themselves and speaking about any special techniques or strategies used in their code submissions to be used in the final video on TechnicallyTi. 
+
+Please refer to the [Video Submission Guidelines](docs/video_submission_guidelines.md) for more details.

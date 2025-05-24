@@ -2,6 +2,13 @@
 
 A week-long AI coding tournament where developers compete by programming intelligent snakes for survival in a strategic grid-based game. Participants submit Python-based AI algorithms that navigate, collect food, and avoid obstacles while competing against rival snakes. The competition follows an elimination-style format, leading to a final showdown to determine the ultimate champion!  
 
+## Competition Timeline
+- 👩🏾‍💻 Coding Begins: May 25th @ 3pm
+- 🗃 Coding Ends: May 31st @ 3pm
+- 👾 Live Tournament: June 7th @ 6pm on Discord
+- 👑 Winner Announced: June 7th (End of Live Tournament)
+- 📹 Video Submissions: June  7th @ 11pm
+
 ## Key Features  
 
 - ⚔️ **Elimination Tournament** – Compete head-to-head until only one remains  
@@ -11,7 +18,7 @@ A week-long AI coding tournament where developers compete by programming intelli
 
 ## Getting Started
 ### Documentation Review
-Before diving into the code, it's crucial to familiarize yourself with the tournament's rules and game design. The [Competition Brief](docs/competition_brief.md) outlines the objectives, rules, and guidelines for participation. When you're ready to implement your AI, refer to the [Controller API Documentation](docs/controller_api.md) for details on how to create your snake's controller.
+Before diving into the code, it's crucial to familiarize yourself with the tournament's rules and game design. The [Competition Brief](docs/competition_brief.md) outlines the objectives, rules, and guidelines for participation. When you're ready to implement your AI, refer to the [Controller API Documentation](docs/controller_api.md) and [Algorithm Guidelines](docs/algorithm_guidelines.md) for details on how to create your snake's controller and general algorithm guidelines.
 
 ### Installation
 1. Clone the Repository
@@ -30,8 +37,10 @@ Before diving into the code, it's crucial to familiarize yourself with the tourn
 ```python -m main```
 
 ## Documentation
+- [Algorithm Guidelines](docs/algorithm_guidelines.md) – Guidelines for the creation of algorithms
 - [Competition Brief](docs/competition_brief.md) – Overview of the tournament rules and game design
 - [Controller API](docs/controller_api.md) – Understand how to implement your AI logic
+- [Video Submission Guidelines](docs/video_submission_guidelines.md) – Overview of the tournament rules and game design
 
 ## File Structure
 ```plaintext
@@ -44,16 +53,19 @@ snakeai/
 │   ├── food.py
 │   ├── game_over_screen.py
 │   ├── game_state.py
+│   ├── obstacle.py
 │   ├── player.py
 │   ├── scorebar.py
 │   └── snake.py
 ├── controllers/
 │   ├── player1_controller.py
 │   ├── player2_controller.py
-│   └── example.py
+│   └── example_controller.py
 ├── docs/
+│   ├── algorithm_guidelines.md
 │   ├── controller_api.md
-│   └── competition_brief.md
+│   ├── competition_brief.md
+│   └── video_submission_guidelines.md
 ├── main.py
 ├── README.md
 └── requirements.txt
