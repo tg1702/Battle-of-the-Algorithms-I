@@ -1,10 +1,17 @@
 # controllers/example_controller.py
 
+from config import config
+
+GRID_SIZE = config.GRID_SIZE
+
 def get_next_move(board_state, player_state, opponent_state):
     """
-    A very basic snake controller.  It always tries to move right, unless
+    A very basic snake controller. It always tries to move right, unless
     that's not a safe move, in which case it tries down, then up, then left.
     If none of those are safe, it returns the current direction.
+
+    This example uses the game's GRID_SIZE for all moves and checks, ensuring
+    compatibility regardless of the configured grid.
 
     Args:
         board_state (dict): Information about the game board.
@@ -28,17 +35,18 @@ def get_next_move(board_state, player_state, opponent_state):
                 return False
         return True
 
-    if direction != "left" and is_safe_move(head_x + 20, head_y):
+    # Always use GRID_SIZE for movement, matching the game's logic
+    if direction != "left" and is_safe_move(head_x + GRID_SIZE, head_y):
         return "right"
-    elif direction != "up" and is_safe_move(head_x, head_y + 20):
+    elif direction != "up" and is_safe_move(head_x, head_y + GRID_SIZE):
         return "down"
-    elif direction != "down" and is_safe_move(head_x, head_y - 20):
+    elif direction != "down" and is_safe_move(head_x, head_y - GRID_SIZE):
         return "up"
-    elif direction != "right" and is_safe_move(head_x - 20, head_y):
+    elif direction != "right" and is_safe_move(head_x - GRID_SIZE, head_y):
         return "left"
     else:
         return direction  # Stay in the same direction if no safe moves
-    
+
 def set_player_name():
     """
     Sets the player's name.
