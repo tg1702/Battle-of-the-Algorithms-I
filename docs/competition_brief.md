@@ -54,11 +54,6 @@ Participants will program an AI version of the classic **Snake game**, where the
 - Each AI has a **50 milliseconds time limit** to choose a new direction for the snake's movement.
 - If a direction is not chosen within this time, the snake will continue moving in the previous direction.
 
-### Sudden Death
-- If a round reaches the time limit and there is no clear winner (**snakes have the same food count**), Sudden Death will be activated.
-- One piece of food is placed on the grid for the snakes to compete for.
-- The snake that collects the food first or survives the longest without collision will be declared the winner.
-
 ### Technical Failure
 - If a participant’s algorithm crashes or behaves in a manner inconsistent with the rules, their snake will be disqualified unless it is proven to be a technical fault unrelated to their code.
 
@@ -66,8 +61,12 @@ Participants will program an AI version of the classic **Snake game**, where the
 
 To participate in the **Battle of the Algorithms**, each developer will need to submit their AI algorithm as a Python script that can be executed by the backend during match execution. Here are the key steps for submitting and integrating your algorithm into the tournament:
 
+### Submission Deadline
+- All algorithm submissions **must be received by 3:00 PM on May 31st**.
+- **Late submissions will not be accepted**, and players will be disqualified.
 
-### File Format
+### Submission Method
+- Code should be submitted via the [Battle of the Algorithms I - Code Submission](https://forms.gle/xHtAgJYsiFmvfpkc7) form.
 - Participants must submit their AI algorithm in **Python script format**.
 - The algorithm must utilize the provided **API** in the [Controller API Documentation](docs/controller_api.md) to interact with the game environment and make decisions based on the game state.
 
@@ -76,21 +75,15 @@ To participate in the **Battle of the Algorithms**, each developer will need to 
   - **Format**: `name_algorithm.py` (e.g., `alice_algorithm.py`).
   - This ensures easy identification and organization of submitted algorithms.
 
+### Algorithm Behaviour
+- Please review the [Algorithm Guidelines](docs/algorithm_guidelines.md) before diving into development.
+- If an algorithm **crashes or behaves incorrectly** (e.g., infinite loops or inconsistent rules), the snake will be **disqualified** from the round unless proven to be a technical fault unrelated to the submitted algorithm.
 
-### Submission Method
-- Players will send their algorithm file to the organizer via the following submission form: [File Submission](https://forms.gle/xHtAgJYsiFmvfpkc7).
-- The file should be named clearly to identify the developer, following the naming convention mentioned above.
-- No submissions will be accepted after the final deadline.
+### Testing and Debugging
+- Before the tournament, it’s recommended to **test your algorithm** using the game setup provided.
+- If there are errors in the final submission, the player will be notified, and a chance to **fix the issue** may be provided before the match begins - up to one day after the deadline.
 
-### API Integration
-- The algorithm must adhere to the standardized **API** provided by the competition in the [Controller API Documentation](docs/controller_api.md). Specifically, it should include:
-  - A function to return the **next move** for the snake based on the game state.
-  - A function to return the **name** of the player.
-
-### Algorithm Behavior
-Please review the [Algorithm Guidelines](docs/algorithm_guidelines.md) before diving into development. 
-
-### Use of AI-Assisted Coding Tools
+## Use of AI-Assisted Coding Tools
 You are welcome to use AI-based tools (such as GitHub Copilot, ChatGPT, or similar assistants) to help write or optimize your algorithm. 
 
 **However, please use AI wisely and responsibly:**
@@ -99,17 +92,6 @@ You are welcome to use AI-based tools (such as GitHub Copilot, ChatGPT, or simil
 - **Debugging:** Test, review, and debug any AI-generated code thoroughly before submitting.
 
 The goal is to celebrate your problem-solving and programming skills. AI is a tool to assist—not a replacement for your own creativity and judgment.
-
-### Testing and Debugging
-- Before the tournament, it’s recommended to **test your algorithm** using the game setup provided.
-- If there are errors in the final submission, the player will be notified, and a chance to **fix the issue** may be provided before the match begins - up to one day after the deadline.
-
-### Algorithm Safety
-- If an algorithm **crashes or behaves incorrectly** (e.g., infinite loops or inconsistent rules), the snake will be **disqualified** from the round unless proven to be a technical fault unrelated to the submitted algorithm.
-
-### Code Submission Deadline
-- All algorithm submissions **must be received before the final tournament starts**.
-- **Late submissions will not be accepted**, and players will be disqualified.
 
 ## Competition Timeline
 - 👩🏾‍💻 Coding Begins: May 25th @ 3pm
