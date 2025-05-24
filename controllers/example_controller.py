@@ -1,4 +1,4 @@
-# controllers/basic_controller.py
+# controllers/example_controller.py
 
 def get_next_move(board_state, player_state, opponent_state):
     """

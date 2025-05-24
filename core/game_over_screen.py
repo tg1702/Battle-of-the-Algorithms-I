@@ -4,8 +4,8 @@ import config.colors as colors
 
 class GameOverScreen:
     """
-    A class responsible for displaying the game over screen when the game ends. 
-    It shows the winner's name and a "GAME OVER" message.
+    Represents the game over screen that appears when the game ends.
+    It displays the winner and provides an option to restart the game.
     """
     def __init__(self):
         board_width = config.BOARD_WIDTH

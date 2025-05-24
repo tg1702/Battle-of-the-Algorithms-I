@@ -2,6 +2,10 @@ import pygame
 from config import config
 
 class SnakeSegment:
+    """
+    Represents a single segment of the snake.
+    Each segment is a square on the grid.
+    """
     def __init__(self, position, color, border_color):
         self.size = config.GRID_SIZE
         self.position = position
@@ -17,6 +21,9 @@ class SnakeSegment:
         pygame.draw.rect(board, self.border_color, segment, 2)
 
 class Snake:
+    """
+    Represents the snake in the game, including its body segments, direction, and movement.
+    """
     def __init__(self, position, direction, color, border_color):
         self.size = config.GRID_SIZE
         self.length = 1
@@ -44,40 +51,35 @@ class Snake:
         self.body.append(new_segment)
         self.length += 1
         
-    def move(self, delta_time):   
+    def move(self):
         """
-        Moves the snake in the current direction based on the elapsed time since the last frame.
+        Moves the snake one grid unit in its current direction.
+        This method is now called discretely based on the AI update interval.
         """
-        steps = 0
+        # Store current head position to become the first body segment's new position
+        previous_head_position = self.head_position.copy()
 
-        self.movement_accumulator += ((delta_time / 1000) * config.GRID_SIZE * config.PLAYER_SPEED)
+        # Update head position based on current direction
+        if self.direction == "left":
+            self.head_position["x"] -= self.size
+        elif self.direction == "right":
+            self.head_position["x"] += self.size
+        elif self.direction == "up":
+            self.head_position["y"] -= self.size
+        elif self.direction == "down":
+            self.head_position["y"] += self.size
 
-        if self.movement_accumulator >= config.GRID_SIZE:
-            steps = self.movement_accumulator // config.GRID_SIZE
-            self.movement_accumulator %= config.GRID_SIZE  # Preserve leftover movement
+        # Update body segments
+        # Move all segments to the position of the segment in front of them, starting from the tail
+        if self.body:
+            # The last segment's current position becomes the new `last_position` for growth
+            self.last_position = self.body[-1].position.copy()
 
-            previous_head_position = self.head_position.copy()
+            for i in range(len(self.body) - 1, 0, -1):
+                self.body[i].position = self.body[i-1].position.copy() # Move segment to previous segment's pos
 
-            match self.direction:
-                case "left":
-                    self.head_position["x"] -= config.GRID_SIZE * steps
-                case "right":
-                    self.head_position["x"] += config.GRID_SIZE * steps
-                case "up":
-                    self.head_position["y"] -= config.GRID_SIZE * steps
-                case "down":
-                    self.head_position["y"] += config.GRID_SIZE * steps
+            # The first body segment (which was previously the head) gets the old head position
+            self.body[0].position = previous_head_position.copy()
 
-            self.head_position["x"] = round(self.head_position["x"])
-            self.head_position["y"] = round(self.head_position["y"])
-            self.body[0].position = self.head_position.copy()
-
-            previous_segment_position = previous_head_position.copy()
-            for i in range(1, len(self.body)):
-                current_segment_position = self.body[i].position.copy()
-                self.body[i].position = previous_segment_position
-                previous_segment_position = current_segment_position
-
-            if self.body:
-                self.last_position = previous_segment_position.copy() 
-                self.tail_position = self.body[-1].position.copy()
+            # Update tail position
+            self.tail_position = self.body[-1].position.copy()

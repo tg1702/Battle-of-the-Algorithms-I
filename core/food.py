@@ -4,6 +4,9 @@ import config.colors as colors
 from config import config
 
 class Food:
+    """
+    Represents the food in the game.
+    """
     def __init__(self):
         self.size = config.GRID_SIZE
         self.x = random.randint(0, (config.BOARD_WIDTH // self.size) - 1) * self.size

@@ -3,6 +3,9 @@ import config.colors as colors
 from config import config
 
 class Board:
+    """
+    Represents the game board where the snake moves and food appears.
+    """
     def __init__(self, width, height):
         self.width = width
         self.height = height

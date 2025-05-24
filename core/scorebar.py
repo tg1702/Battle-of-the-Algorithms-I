@@ -1,6 +1,10 @@
 import pygame
 
 class ScoreBar:
+    """
+    Represents the score bar in the game, which visually represents the players' scores.
+    The score bar is a rectangle divided into two parts, each representing one player's score.
+    """
     def __init__(self, x, y, screen):
         self.x = x
         self.y = y
@@ -10,11 +14,8 @@ class ScoreBar:
     
     def draw(self, screen, player1, player2):
         """
-        Draws the score bar on the screen, which is a visual representation of the players' scores.
-        
-        The score bar is a rectangle divided into two parts, each representing one player's score.
-        The length of each part is proportional to the player's score relative to the total score.
-        The color of each part is the same as the player's color.
+        Draws the score bar on the given screen surface, representing the scores of two players.
+        The score bar is divided into two parts, each representing one player's score, drawn in their respective colors.
         """
         
         total_score = player1.score + player2.score
