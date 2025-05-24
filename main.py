@@ -69,6 +69,9 @@ def ai_worker(player_obj, board_state_data, player_state_data, opponent_state_da
         print(f"Error in {player_obj.name}'s controller: {e}")
         traceback.print_exc()
         result_queue.put(None)
+    finally:
+        if result_queue.empty():
+            result_queue.put("none")
 
 
 def get_player_state(player_obj):
@@ -169,11 +172,9 @@ while running:
                 if direction in ["left", "right", "up", "down"]:
                     player1.snake.direction = direction
                 else:
-                    print("Player 1 controller returned invalid or no direction within timeout.")
+                    print(f"Invalid move returned by Player {player1.id}: {direction}")
             except queue.Empty:
                 print("Player 1 controller timed out.")
-            if p1_thread.is_alive():
-                p1_thread.join(0.01)
 
             # Get Player 2 Direction
             try:
@@ -181,11 +182,9 @@ while running:
                 if direction in ["left", "right", "up", "down"]:
                     player2.snake.direction = direction
                 else:
-                    print("Player 2 controller returned invalid or no direction within timeout.")
+                    print(f"Invalid move returned by Player {player2.id}: {direction}")
             except queue.Empty:
                 print("Player 2 controller timed out.")
-            if p2_thread.is_alive():
-                p2_thread.join(0.01)
 
             # Move Snakes
             player1.snake.move()
