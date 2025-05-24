@@ -18,7 +18,7 @@ A week-long AI coding tournament where developers compete by programming intelli
 
 ## Getting Started
 ### Documentation Review
-Before diving into the code, it's crucial to familiarize yourself with the tournament's rules and game design. The [Competition Brief](docs/competition_brief.md) outlines the objectives, rules, and guidelines for participation. When you're ready to implement your AI, refer to the [Controller API Documentation](docs/controller_api.md) and [Algorithm Guidelines](docs/algorithm_guidelines.md) for details on how to create your snake's controller and general algorithm guidelines.
+Before diving into the code, it's crucial to familiarize yourself with the tournament's rules and game design. The [Competition Brief](docs/competition_brief.md) outlines the objectives, rules, and guidelines for participation. When you're ready to implement your AI, refer to the [Controller API Documentation](docs/controller_api.md) and [Algorithm Guidelines](docs\algorithm_guidlines.md) for details on how to create your snake's controller and general algorithm guidelines.
 
 ### Installation
 1. Clone the Repository
