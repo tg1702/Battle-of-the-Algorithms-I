@@ -68,7 +68,7 @@ To participate in the **Battle of the Algorithms**, each developer will need to 
 ### Submission Method
 - Code should be submitted via the [Battle of the Algorithms I - Code Submission](https://forms.gle/xHtAgJYsiFmvfpkc7) form.
 - Participants must submit their AI algorithm in **Python script format**.
-- The algorithm must utilize the provided **API** in the [Controller API Documentation](docs/controller_api.md) to interact with the game environment and make decisions based on the game state.
+- The algorithm must utilize the provided **API** in the [Controller API Documentation](controller_api.md) to interact with the game environment and make decisions based on the game state.
 
 ### File Naming Convention
 - To avoid confusion, all algorithm files must follow a specific **naming convention**:
@@ -76,7 +76,7 @@ To participate in the **Battle of the Algorithms**, each developer will need to 
   - This ensures easy identification and organization of submitted algorithms.
 
 ### Algorithm Behaviour
-- Please review the [Algorithm Guidelines](docs/algorithm_guidelines.md) before diving into development.
+- Please review the [Algorithm Guidelines](algorithm_guidlines.md) before diving into development.
 - If an algorithm **crashes or behaves incorrectly** (e.g., infinite loops or inconsistent rules), the snake will be **disqualified** from the round unless proven to be a technical fault unrelated to the submitted algorithm.
 
 ### Testing and Debugging
@@ -103,4 +103,4 @@ The goal is to celebrate your problem-solving and programming skills. AI is a to
 ## Video Submissions
 After submissions close, each contestant will be asked to submit a short video introducing themselves and speaking about any special techniques or strategies used in their code submissions to be used in the final video on TechnicallyTi. 
 
-Please refer to the [Video Submission Guidelines](docs/video_submission_guidelines.md) for more details.
+Please refer to the [Video Submission Guidelines](video_submission_guidelines.md) for more details.
