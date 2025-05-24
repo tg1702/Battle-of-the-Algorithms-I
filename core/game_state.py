@@ -22,7 +22,7 @@ class GameState:
         self.winner = None
         
         # Initialize food on the board 
-        for _ in range(3):
+        for _ in range(config.NUM_FOOD):
             while True:
                 new_food = Food()
                 food_position_grid = (new_food.x // config.GRID_SIZE, new_food.y // config.GRID_SIZE)
@@ -42,13 +42,14 @@ class GameState:
                     break
             
         # Initialize obstacles on the board
-        for _ in range(5):
+        for _ in range(config.NUM_OBSTACLES):
             while True:
                 new_obstacle = Obstacle()
                 obstacle_positions = new_obstacle.get_occupied_positions()  # must return grid positions
 
                 # Gather all occupied positions
                 occupied_positions = set()
+                
                 for segment in self.player1.snake.body:
                     gx, gy = segment.position["x"] // config.GRID_SIZE, segment.position["y"] // config.GRID_SIZE
                     occupied_positions.add((gx, gy))
@@ -64,7 +65,7 @@ class GameState:
                 if not any(pos in occupied_positions for pos in obstacle_positions):
                     self.obstacle_locations.append(new_obstacle)
                     for (x, y) in obstacle_positions:
-                        self.occupied[x][y] = new_obstacle  # note: occupied[y][x]
+                        self.occupied[x][y] = new_obstacle
                     break
 
             

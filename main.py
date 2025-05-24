@@ -3,6 +3,7 @@ import pygame
 import threading
 import traceback
 import queue
+from itertools import chain
 
 # User-Defined Imports
 from config import config
@@ -150,6 +151,7 @@ while running:
                 "rows": game_board.rows,
                 "cols": game_board.cols,
                 "food_locations": [(food.x, food.y) for food in state.food_locations],
+                "obstacle_locations": list(chain.from_iterable(obs.get_occupied_positions() for obs in state.obstacle_locations))
             }
 
             # Get Player States

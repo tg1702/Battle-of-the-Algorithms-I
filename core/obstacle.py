@@ -11,7 +11,7 @@ class Obstacle:
     def __init__(self):
         self.size = config.GRID_SIZE
         self.orientation = random.choice(["horizontal", "vertical"])
-        self.length = random.randint(3, 5)
+        self.length = random.randint(4, 6)
 
         if self.orientation == "horizontal":
             self.width = self.size * self.length
