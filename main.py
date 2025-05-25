@@ -14,6 +14,7 @@ import core.game_state as game_state
 import config.colors as colors
 import core.game_over_screen as game_over_screen
 
+# Initialize Pygame
 pygame.init()
 
 # Screen Setup
@@ -25,7 +26,7 @@ pygame.display.set_caption(config.TITLE)
 # Timing Setup
 clock = pygame.time.Clock()
 game_start_time = pygame.time.get_ticks()
-max_game_duration = 5 * 60 * 1000  # 5 minutes in milliseconds
+max_game_duration = config.GAME_DURATION
 timer_font = pygame.font.SysFont(None, 36)
 
 # Title Setup
@@ -134,89 +135,151 @@ while running:
         current_loop_time = pygame.time.get_ticks()
         elapsed_game_time = current_loop_time - game_start_time
 
-        # Check Elapsed Game Time Against Max Game Duration
-        if elapsed_game_time >= max_game_duration:
-            state.game_over = True
-            state.time_up = True
-            state.calculate_winner(player1, player2)
-            continue
-
-        # AI Update Logic
-        if current_loop_time - last_ai_update_time >= config.AI_UPDATE_INTERVAL_MS:
-            last_ai_update_time = current_loop_time
-
-            board_snapshot = {
-                "width": game_board.width,
-                "height": game_board.height,
-                "rows": game_board.rows,
-                "cols": game_board.cols,
-                "food_locations": [(food.x, food.y) for food in state.food_locations],
-                "obstacle_locations": list(chain.from_iterable(obs.get_occupied_positions() for obs in state.obstacle_locations))
-            }
-
-            # Get Player States
-            p1_state = get_player_state(player1)
-            p2_state = get_player_state(player2)
-
-            # Clear Result Queues
-            while not p1_result_queue.empty():
-                p1_result_queue.get_nowait()
-            while not p2_result_queue.empty():
-                p2_result_queue.get_nowait()
-
-            # Start Threads for AI Controllers
-            p1_thread = threading.Thread(target=ai_worker, args=(player1, board_snapshot, p1_state, p2_state, p1_result_queue), daemon=True)
-            p2_thread = threading.Thread(target=ai_worker, args=(player2, board_snapshot, p2_state, p1_state, p2_result_queue), daemon=True)
-            p1_thread.start()
-            p2_thread.start()
-
-            # Get Player 1 Direction
-            try:
-                direction = p1_result_queue.get(timeout=config.CONTROLLER_TIMEOUT_SECONDS)
-                if direction in ["left", "right", "up", "down"]:
-                    player1.snake.direction = direction
+        # Check Elapsed Game Time Against Max Game Duration to start Sudden Death
+        if not state.sudden_death_active and not state.pre_sudden_death_active and elapsed_game_time >= max_game_duration:
+                if player1.score == player2.score:
+                    state.start_pre_sudden_death()
                 else:
-                    print(f"Invalid move returned by Player {player1.id}: {direction}")
-            except queue.Empty:
-                print("Player 1 controller timed out.")
+                    state.calculate_winner(player1, player2)
+                    state.game_over = True
 
-            # Get Player 2 Direction
-            try:
-                direction = p2_result_queue.get(timeout=config.CONTROLLER_TIMEOUT_SECONDS)
-                if direction in ["left", "right", "up", "down"]:
-                    player2.snake.direction = direction
-                else:
-                    print(f"Invalid move returned by Player {player2.id}: {direction}")
-            except queue.Empty:
-                print("Player 2 controller timed out.")
+        # If we are in the pre-sudden death message phase
+        if state.pre_sudden_death_active:
+            # Check if the pre-sudden death message duration has passed
+            if current_loop_time - state.pre_sudden_death_start_time >= config.PRE_SUDDEN_DEATH_MESSAGE_DURATION:
+                state.start_sudden_death() # Start the actual sudden death round
+        else:
+            # AI Update Logic
+            if current_loop_time - last_ai_update_time >= config.AI_UPDATE_INTERVAL_MS:
+                last_ai_update_time = current_loop_time
 
-            # Move Snakes
-            player1.snake.move()
-            player2.snake.move()
+                board_snapshot = {
+                    "width": game_board.width,
+                    "height": game_board.height,
+                    "rows": game_board.rows,
+                    "cols": game_board.cols,
+                    "food_locations": [(food.x, food.y) for food in state.food_locations],
+                    "obstacle_locations": list(chain.from_iterable(obs.get_occupied_positions() for obs in state.obstacle_locations))
+                }
+
+                # Get Player States
+                p1_state = get_player_state(player1)
+                p2_state = get_player_state(player2)
+
+                # Clear Result Queues
+                while not p1_result_queue.empty():
+                    p1_result_queue.get_nowait()
+                while not p2_result_queue.empty():
+                    p2_result_queue.get_nowait()
+
+                # Start Threads for AI Controllers
+                p1_thread = threading.Thread(target=ai_worker, args=(player1, board_snapshot, p1_state, p2_state, p1_result_queue), daemon=True)
+                p2_thread = threading.Thread(target=ai_worker, args=(player2, board_snapshot, p2_state, p1_state, p2_result_queue), daemon=True)
+                p1_thread.start()
+                p2_thread.start()
+
+                # Get Player 1 Direction
+                try:
+                    direction = p1_result_queue.get(timeout=config.CONTROLLER_TIMEOUT_SECONDS)
+                    if direction in ["left", "right", "up", "down"]:
+                        player1.snake.direction = direction
+                    else:
+                        print(f"Invalid move returned by Player {player1.id}: {direction}")
+                except queue.Empty:
+                    print("Player 1 controller timed out.")
+
+                # Get Player 2 Direction
+                try:
+                    direction = p2_result_queue.get(timeout=config.CONTROLLER_TIMEOUT_SECONDS)
+                    if direction in ["left", "right", "up", "down"]:
+                        player2.snake.direction = direction
+                    else:
+                        print(f"Invalid move returned by Player {player2.id}: {direction}")
+                except queue.Empty:
+                    print("Player 2 controller timed out.")
+
+                # Move Snakes
+                player1.snake.move()
+                player2.snake.move()
+                
+                # Check Food Collisions and capture if sudden death food was eaten
+                p1_ate_sudden_death_food = state.check_food_collision(player1)
+                p2_ate_sudden_death_food = state.check_food_collision(player2)
+                
+                # Handle Sudden Death Food Win Condition (Fairness Check)
+                if state.sudden_death_active:
+                    # Tie
+                    if p1_ate_sudden_death_food and p2_ate_sudden_death_food:
+                        player1.score += 1
+                        player2.score += 1
+                        state.winner = None
+                        state.game_over = True
+                    # Player 1 Wins
+                    elif p1_ate_sudden_death_food:
+                        player1.score += 1
+                        state.winner = player1
+                        state.game_over = True
+                    # Player 2 Wins    
+                    elif p2_ate_sudden_death_food:
+                        player2.score += 1
+                        state.winner = player2
+                        state.game_over = True
+                
+                # Check Player Collisions
+                state.check_player_collision(player1, player2)
+                state.check_player_collision(player2, player1)
+                
+                # If Collision Occurs, Skip Remaining Logic
+                if state.game_over:
+                    continue
             
-            # Check Food Collisions
-            state.check_food_collision(player1)
-            state.check_food_collision(player2)
-            
-            # Check Player Collisions
-            state.check_player_collision(player1, player2)
-            state.check_player_collision(player2, player1)
-            if state.game_over:
-                continue
+        # If Sudden Death Time Is Up, Skip Remaining Logic
+        if state.game_over:
+            continue       
             
     # Render Screen
     screen.fill(colors.background_color)
-    game_board.draw(screen)
-    screen.blit(title_surface, (screen_width / 2 - 165, 50))
+    
+    # Conditionally Render Sudden Death Message
+    if state.pre_sudden_death_active:
+        # Display "Sudden Death" message in the center
+        message_font = pygame.font.SysFont(None, 80, bold=True)
+        message_surface = message_font.render("SUDDEN DEATH", True, "Red")
+        message_rect = message_surface.get_rect(center=(screen_width / 2, screen_height / 2))
+        screen.blit(message_surface, message_rect)
 
-    # Render Timer
-    if not state.game_over:
-        elapsed_game_time = pygame.time.get_ticks() - game_start_time
-        minutes = elapsed_game_time // 60000
-        seconds = (elapsed_game_time % 60000) // 1000
-        timer_text = f"{minutes:02}:{seconds:02}"
-        timer_surface = timer_font.render(timer_text, True, "white")
-        screen.blit(timer_surface, (20, 20))
+        # Optionally display countdown for the message
+        remaining_message_time_ms = max(0, config.PRE_SUDDEN_DEATH_MESSAGE_DURATION - (pygame.time.get_ticks() - state.pre_sudden_death_start_time))
+        seconds_left = (remaining_message_time_ms // 1000) + 1 
+        countdown_font = pygame.font.SysFont(None, 60)
+        countdown_surface = countdown_font.render(str(seconds_left), True, "White")
+        countdown_rect = countdown_surface.get_rect(center=(screen_width / 2, screen_height / 2 + 80))
+        screen.blit(countdown_surface, countdown_rect)
+
+    else:
+        game_board.draw(screen)
+        screen.blit(title_surface, (screen_width / 2 - 165, 50))
+        
+        if not state.game_over:       
+            # Render Timer
+            if state.sudden_death_active:
+                # Change: Sudden Death Round Timer COUNTS UP from 0:00
+                elapsed_sd_time_ms = pygame.time.get_ticks() - state.sudden_death_start_time
+                elapsed_sd_seconds = elapsed_sd_time_ms // 1000
+                minutes = elapsed_sd_seconds // 60
+                seconds = elapsed_sd_seconds % 60
+                timer_text = f"Sudden Death - {minutes:02}:{seconds:02}"
+                timer_color = "White"
+            else:
+                # Display regular game timer
+                elapsed_game_time_display = pygame.time.get_ticks() - game_start_time
+                minutes = elapsed_game_time_display // 60000
+                seconds = (elapsed_game_time_display % 60000) // 1000
+                timer_text = f"{minutes:02}:{seconds:02}"
+                timer_color = "Red" if elapsed_game_time_display > config.GAME_DURATION - 10000 else "White"
+            
+    timer_surface = timer_font.render(timer_text, True, timer_color)
+    screen.blit(timer_surface, (20, 20))
 
     # Render Scores
     player1.draw_score(screen, {"x": 150, "y": 100})
