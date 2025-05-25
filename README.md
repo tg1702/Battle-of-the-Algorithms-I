@@ -40,7 +40,7 @@ Before diving into the code, it's crucial to familiarize yourself with the tourn
 - [Algorithm Guidelines](docs/algorithm_guidelines.md) – Guidelines for the creation of algorithms
 - [Competition Brief](docs/competition_brief.md) – Overview of the tournament rules and game design
 - [Controller API](docs/controller_api.md) – Understand how to implement your AI logic
-- [Video Submission Guidelines](docs/video_submission_guidelines.md) – Overview of the tournament rules and game design
+- [Video Submission Guidelines](docs/video_submission_guidelines.md) – Overview of video submission guidelines
 
 ## File Structure
 ```plaintext
