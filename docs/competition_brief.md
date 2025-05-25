@@ -50,6 +50,13 @@ Participants will program an AI version of the classic **Snake game**, where the
 - Each round will terminate after **5 minutes**.
 - If the time expires before a collision occurs, the snake with the highest food count at the time of expiration wins.
 
+### Sudden Death Mode
+- If the round ends after 5 minutes **and both snakes have exactly the same score**, the game enters **Sudden Death** mode:
+    - Both snakes are temporarily paused and a "Sudden Death" message is displayed with a countdown.
+    - All regular food is cleared from the grid, and a single special "sudden death apple" is spawned in a random location.
+    - When the countdown ends, both snakes resume play.
+    - The first snake to eat the sudden death apple wins the match.
+
 ### AI Decision Time Limit
 - Each AI has a **50 milliseconds time limit** to choose a new direction for the snake's movement.
 - If a direction is not chosen within this time, the snake will continue moving in the previous direction.
