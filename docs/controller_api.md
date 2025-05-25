@@ -1,129 +1,175 @@
 # Player Controller API Documentation
 
-The player controller API defines how your snake's AI communicates with the game engine. Your controller must be implemented as a Python file (e.g., `player1_controller.py`) located in the `controllers/` directory.
+## Table of Contents
+- [Introduction](#introduction)
+- [How the Controller Works](#how-the-controller-works)
+- [Controller File Structure](#controller-file-structure)
+- [Required Functions](#required-functions)
+- [Data Structures](#data-structures)
+- [Return Values](#return-values)
+- [Example Controller](#example-controller)
+- [Tips and Best Practices](#tips-and-best-practices)
+- [Additional Resources](#additional-resources)
 
-## Making A Player Controller
-Player controller files are Python files that contain the logic for how a snake in the game will behave.  These files are placed in the `controllers/` directory.
+---
 
-For example, a controller for player 1 would typically be named `player1_controller.py`, and a controller for player 2 would be named `player2_controller.py`.
+## Introduction
+
+This document describes how to create a Python AI controller for the Battle of the Algorithms I - Snake AI competition. Each controller determines the snake's direction of movement and provides a player name.
+
+---
+
+## How the Controller Works
+
+- Player controller files are Python files that contain the logic for how a snake in the game will behave.  These files are placed in the `controllers/` directory.
+
+- The game engine will import your controller and call specific functions (`get_next_move`, `set_player_name`) as needed.
+- The engine passes game state data to your controller every frame and expects a move in response.
+
+---
 
 ## Controller File Structure
-The controller files are structured to allow you to implement your own logic for the snake's behavior. The game engine will call the functions defined in these files to determine the snake's next move based on the current game state.
 
 There are 3 player controller files in the `controllers/` directory:
 - player1_controller.py
 - player2_controller.py 
-- example.py
+- example_controller.py
 
-The `example.py` file is provided as a template for you to create your own controller. You can use this as a starting point for your own logic. It contains example functions and comments to help you understand how to implement your AI.
+The `example_controller.py` file is provided as a template for you to create your own controller. You can use this as a starting point for your own logic. It contains example functions and comments to help you understand how to implement your AI.
 
 The `player1_controller.py` and `player2_controller.py` files are the ones that will be used in the game. You can implement your logic in the `player1_controller.py` and use the `player2_controller.py` file for testing purposes. Your test opponent can be any logic you want, including a random move generator or a more complex AI.
 
-### `get_next_move` Function
+---
 
-Each controller file must define a function named `get_next_move` with the following signature:
+## Required Functions
+
+### `get_next_move`
 
 ```python
 def get_next_move(board_state, player_state, opponent_state):
     # Your logic here
     return "direction"  # Must be "left", "right", "up", or "down"
 ```
+This function is called every frame to determine your next move.
 
-This function is called by the game engine each frame to determine the snake's next move.
+#### Parameters:
+- **`board_state`**: a dictionary describing the board and environment.
+- **`player_state`**: a dictionary with your snake’s data.
+- **`opponent_state`**: a dictionary with your opponent’s data.
 
-### Input Parameters
+---
 
-The `get_next_move` function receives the following input parameters:
-
-* `board_state` (dict): Information about the game board.
-
-* `player_state` (dict): Information about the current player's snake.
-
-* `opponent_state` (dict): Information about the opponent's snake.
-
-### Data Structures
-
-Below is a detailed description of the data provided in the input dictionaries:
-
-#### `board_state` (dict)
-
-* `"width"` (int): The width of the game board in pixels.
-
-* `"height"` (int): The height of the game board in pixels.
-
-* `"food_locations"` (list of tuples): A list of tuples, where each tuple `(food_x, food_y)` represents the x and y coordinates (in pixels) of a food item on the board.
-
-* `"obstacle_locations"` (list of tuples): A list of tuples, where each tuple (obs_x, obs_y) represents the x and y coordinates (in pixels) of an obstacle on the board. Snakes must avoid these cells.
-
-* `"player1_body"` (list of dicts): A list representing the segments of player 1's snake's body. Each element in the list is a dictionary with the following structure:
-
-  * `"x"` (int): The x-coordinate (in pixels) of the snake segment.
-
-  * `"y"` (int): The y-coordinate (in pixels) of the snake segment.
-
-* `"player2_body"` (list of dicts): A list representing the segments of player 2's snake's body. Each element in the list is a dictionary with the following structure:
-  * `"x"` (int): The x-coordinate (in pixels) of the snake segment.
-
-  * `"y"` (int): The y-coordinate (in pixels) of the snake segment.
-
-#### `player_state` (dict)
-
-* `"head_position"` (dict):
-
-  * `"x"` (int): The x-coordinate (in pixels) of the player's snake's head.
-
-  * `"y"` (int): The y-coordinate (in pixels) of the player's snake's head.
-
-* `"direction"` (str): The current direction the player's snake is moving. Possible values are: `"left"`, `"right"`, `"up"`, or `"down"`.
-
-* `"body"` (list of dicts): A list representing the segments of the player's snake's body. Each element in the list is a dictionary with the following structure:
-
-  * `"x"` (int): The x-coordinate (in pixels) of the snake segment.
-
-  * `"y"` (int): The y-coordinate (in pixels) of the snake segment.
-
-* `"score"` (int): The current score of the player.
-
-#### `opponent_state` (dict)
-
-* `"head_position"` (dict):
-
-  * `"x"` (int): The x-coordinate (in pixels) of the opponent's snake's head.
-
-  * `"y"` (int): The y-coordinate (in pixels) of the opponent's snake's head.
-
-* `"direction"` (str): The current direction the opponent's snake is moving. Possible values are: `"left"`, `"right"`, `"up"`, or `"down"`.
-
-* `"body"` (list of dicts): A list representing the segments of the opponent's snake's body. Each element in the list is a dictionary with the following structure:
-
-  * `"x"` (int): The x-coordinate (in pixels) of the snake segment.
-
-  * `"y"` (int): The y-coordinate (in pixels) of the snake segment.
-
-* `"score"` (int): The current score of the opponent.
-
-#### Return Value
-
-The `get_next_move` function must return a string representing the direction the snake should move. The string must be one of the following:
-
-* `"left"`
-
-* `"right"`
-
-* `"up"`
-
-* `"down"`
-
-
-### `set_player_name` Function
-
-Each controller file must define a function named `set_player_name` with the following signature:
+### `set_player_name`
 
 ```python
 def set_player_name():
-    return "Your Name"
+    return "YourName" # Please keep it short and sweet :)
 ```
-This function is called by the game engine to set the name of the snake. 
+Called once at game start to set your snake’s display name.
 
-#### Return Value
-The `set_player_name` function must return a string representing the name of the player. The string can be any valid Python string, but it should not contain any special characters or spaces.
+---
+
+## Data Structures
+> **Note:**  
+> All coordinates (such as positions for snakes, food, and obstacles) passed to the controller are in pixel units, but are always aligned to the grid—meaning they are always multiples of `GRID_SIZE`. You should perform all movement and position calculations using `GRID_SIZE` to ensure your logic remains grid-aligned and compatible with the game’s rules.
+
+### `board_state`
+A dictionary containing info about the game world.
+
+```python
+{
+    "width": int,              # Board width in pixels
+    "height": int,             # Board height in pixels
+    "rows": int,               # Board rows 
+    "cols": int,               # Board columns 
+    "food_locations": [        # List of (x, y) tuples for each food item
+        (x1, y1), (x2, y2), ...
+    ],
+    "obstacle_locations": [    # List of (x, y) tuples for each occupied cell by obstacles
+        (ox1, oy1), (ox2, oy2), ...
+    ]
+}
+```
+
+> **Note:**  
+> Obstacle and Food x and y values are provided in pixels.  
+> Grid-based calculations should use the grid cell indices derived from these pixels, which can be obtained by dividing each coordinate by `GRID_SIZE` (found in `config/config.py`).  
+>
+> For example, if `food_x = 90` and `GRID_SIZE = 15`, then the grid cell index is:  
+> `grid_x = food_x // GRID_SIZE`  
+> `grid_x = 90 // 15 = 6`
+
+### `player_state` / `opponent_state`
+
+A dictionary representing either your snake or your opponent. Structure is identical for both:
+
+```python
+{
+    "id": int,                        # Player number (1 or 2)
+    "head_position": {"x": int, "y": int},   # Current head position in pixels
+    "body": [                                # List of segment positions, head first
+        {"x": int, "y": int},
+        ...
+    ],
+    "direction": "left"|"right"|"up"|"down", # Current direction
+    "score": int,                            # Current score
+    "length": int                            # Number of body segments
+}
+```
+
+---
+
+## Return Values
+
+`set_player_name` must return a string representing the name of your snake. `(e.g "Jane")`
+- This value will be displayed on the scoreboard and match results.
+- If any other data type is returned, the engine will ignore it and log an error.
+
+`get_next_move` must return one of the following strings:
+  - `"left"`
+  - `"right"`
+  - `"up"`
+  - `"down"`
+- Any other value will be ignored by the engine and logged as an error.
+
+---
+
+## Example Controller
+
+```python
+def set_player_name():
+    return "SnakeBot"
+
+def get_next_move(board_state, player_state, opponent_state):
+    head = player_state["head_position"]
+    if board_state["food_locations"]:
+        target_x, target_y = board_state["food_locations"][0]
+        if target_x < head["x"]:
+            return "left"
+        elif target_x > head["x"]:
+            return "right"
+        elif target_y < head["y"]:
+            return "up"
+        elif target_y > head["y"]:
+            return "down"
+    # Default: keep moving in the current direction
+    return player_state["direction"]
+```
+
+---
+
+## Tips and Best Practices
+
+- **Handle Edge Cases:** Avoid walls and obstacles by checking `obstacle_locations` and board boundaries.
+- **Be Efficient:** Your AI must return within the configured timeout (see `CONTROLLER_TIMEOUT_SECONDS` in config). Taking too long to return a move will result in a timeout and skipped turn.
+- **Default Safely:** If you can't decide, continue in your current direction. 
+
+---
+
+## Additional Resources
+
+- Example Controller: [`controllers/example.py`](../controllers/example_controller.py)
+- Algorithm Guidelines:  [`algorithm_guidelines.md`](algorithm_guidelines.md)
+- Python Docs: [python.org](https://docs.python.org/3/)
+
+---
