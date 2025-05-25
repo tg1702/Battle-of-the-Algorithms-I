@@ -6,17 +6,16 @@ from core.obstacle import Obstacle
 
 class GameState:
     """
-    Represents the state of the game, including the board, players, and food.
-    Handles collision detection and game logic.
+    Represents the current state of the game, including the board, players, food, and obstacles.
+    Handles collision detection and core game logic.
     """
     def __init__(self, board, player1, player2):
         # Board Attributes
         self.board = board
-        self.rows = self.board.rows
-        self.cols = self.board.cols
+        self.rows = board.rows
+        self.cols = board.cols
         
         # Occupied Spaces
-        self.occupied = [[{} for _ in range(self.rows)] for _ in range(self.cols)]
         self.food_locations = []
         self.obstacle_locations = []
         
@@ -25,9 +24,9 @@ class GameState:
         self.player2 = player2 
         self.winner = None
         
-        # Game State
+        # Game State Flags
         self.game_over = False
-        self.time_up = False
+        self.time_up = False 
         
         # Sudden Death Attributes
         self.pre_sudden_death_active = False
@@ -35,245 +34,246 @@ class GameState:
         self.sudden_death_food = None 
         self.sudden_death_start_time = None
         
-        # Initialize food on the board
+        # Spawn Initial Food
         for _ in range(config.NUM_FOOD):
             self._spawn_food()
             
-        # Initialize obstacles on the board
+        # Spawn Initial Obstacles
         for _ in range(config.NUM_OBSTACLES):
             while True:
                 new_obstacle = Obstacle()
-                obstacle_positions = new_obstacle.get_occupied_positions()  # must return grid positions
+                obstacle_positions = new_obstacle.get_occupied_positions()
 
-                # Gather all occupied positions
-                occupied_positions = set()
-                
-                for segment in self.player1.snake.body:
-                    gx, gy = segment.position["x"] // config.GRID_SIZE, segment.position["y"] // config.GRID_SIZE
-                    occupied_positions.add((gx, gy))
-                for segment in self.player2.snake.body:
-                    gx, gy = segment.position["x"] // config.GRID_SIZE, segment.position["y"] // config.GRID_SIZE
-                    occupied_positions.add((gx, gy))
-                for food in self.food_locations:
-                    gx, gy = food.x // config.GRID_SIZE, food.y // config.GRID_SIZE
-                    occupied_positions.add((gx, gy))
-                for obs in self.obstacle_locations:
-                    occupied_positions.update(obs.get_occupied_positions())
-
+                # Avoid placing on occupied positions
+                occupied_positions = self._get_all_occupied_grid_positions(include_future_heads=False)
                 if not any(pos in occupied_positions for pos in obstacle_positions):
                     self.obstacle_locations.append(new_obstacle)
-                    for (x, y) in obstacle_positions:
-                        self.occupied[x][y] = new_obstacle
                     break
                 
+    def _get_all_occupied_grid_positions(self, include_future_heads=True):
+        """
+        Returns all occupied grid positions (snakes, food, and obstacles).
+        If include_future_heads is True, current snake heads are included.
+        """
+        occupied_positions = set()
+        
+        # Include future snake heads
+        if include_future_heads:
+            occupied_positions.add((self.player1.snake.head_position["x"] // config.GRID_SIZE, self.player1.snake.head_position["y"] // config.GRID_SIZE))
+            occupied_positions.add((self.player2.snake.head_position["x"] // config.GRID_SIZE, self.player2.snake.head_position["y"] // config.GRID_SIZE))
+        
+        # Snake bodies
+        for segment in self.player1.snake.body:
+            occupied_positions.add((segment.position["x"] // config.GRID_SIZE, segment.position["y"] // config.GRID_SIZE))
+        for segment in self.player2.snake.body:
+            occupied_positions.add((segment.position["x"] // config.GRID_SIZE, segment.position["y"] // config.GRID_SIZE))
+        
+        # Food locations
+        for food in self.food_locations:
+            occupied_positions.add((food.x // config.GRID_SIZE, food.y // config.GRID_SIZE))
+        
+        # Obstacles
+        for obs in self.obstacle_locations:
+            occupied_positions.update(obs.get_occupied_positions())
+            
+        return occupied_positions
+                            
     def _spawn_food(self, is_sudden_death_food=False):
         """
-        Helper method to spawn a single food item in a random, unoccupied spot.
-        Can be used for initial food, new food during regular gameplay, or the sudden death apple.
+        Spawns a single food item in a valid, unoccupied location.
+        If is_sudden_death_food is True, replaces all existing food with one sudden death item.
         """
-        while True:
+        if is_sudden_death_food:
+            self.food_locations.clear()
+            self.sudden_death_food = None
+            
+        spawned = False
+        attempts = 0
+        max_attempts = self.rows * self.cols * 2
+
+        while not spawned and attempts < max_attempts:
             new_food = Food()
             food_position_grid = (new_food.x // config.GRID_SIZE, new_food.y // config.GRID_SIZE)
-
-            # Gather all occupied positions by snakes, existing food, and obstacles
-            occupied_positions = set()
+            occupied_positions = self._get_all_occupied_grid_positions(include_future_heads=True)
             
-            for seg in self.player1.snake.body:
-                occupied_positions.add((seg.position["x"] // config.GRID_SIZE, seg.position["y"] // config.GRID_SIZE))
-                
-            for seg in self.player2.snake.body:
-                occupied_positions.add((seg.position["x"] // config.GRID_SIZE, seg.position["y"] // config.GRID_SIZE))
-                
-            for existing_food in self.food_locations:
-                # Ensure we don't consider the food we're about to replace as occupied
-                if existing_food != new_food: 
-                    occupied_positions.add((existing_food.x // config.GRID_SIZE, existing_food.y // config.GRID_SIZE))
-                    
-            for obs in self.obstacle_locations:
-                occupied_positions.update(obs.get_occupied_positions())
-                
-            # If a sudden death food exists and it's not the one we're trying to place, consider its position occupied to avoid overlap.
-            if self.sudden_death_food and self.sudden_death_food != new_food:
-                occupied_positions.add((self.sudden_death_food.x // config.GRID_SIZE, self.sudden_death_food.y // config.GRID_SIZE))
-
-            if food_position_grid not in occupied_positions:
-                if is_sudden_death_food:
-                    self.sudden_death_food = new_food
+            if food_position_grid in occupied_positions:
+                attempts += 1
+                continue
+            
+            if is_sudden_death_food:
+                self.sudden_death_food = new_food
                 self.food_locations.append(new_food)
-                self.occupied[new_food.x // config.GRID_SIZE][new_food.y // config.GRID_SIZE] = new_food
+            else:
+                self.food_locations.append(new_food)
+            spawned = True
+        
+        if not spawned:
+            print("Warning: Could not spawn food. Board might be full.")
+            self.winner = None
+            self.game_over = True
+
+    def resolve_collisions(self):
+        """
+        Resolves all collisions in the game simultaneously and updates the game state accordingly.
+        """
+        p1_head_grid = (self.player1.snake.head_position["x"] // config.GRID_SIZE, self.player1.snake.head_position["y"] // config.GRID_SIZE)
+        p2_head_grid = (self.player2.snake.head_position["x"] // config.GRID_SIZE, self.player2.snake.head_position["y"] // config.GRID_SIZE)
+
+        p1_collided = False
+        p2_collided = False
+        
+        # Wall collisions
+        if not (0 <= p1_head_grid[0] < self.cols and 0 <= p1_head_grid[1] < self.rows):
+            p1_collided = True
+        if not (0 <= p2_head_grid[0] < self.cols and 0 <= p2_head_grid[1] < self.rows):
+            p2_collided = True
+
+        # Self-collisions
+        for segment in self.player1.snake.body:
+            if p1_head_grid == (segment.position["x"] // config.GRID_SIZE, segment.position["y"] // config.GRID_SIZE):
+                p1_collided = True
+                break
+        for segment in self.player2.snake.body:
+            if p2_head_grid == (segment.position["x"] // config.GRID_SIZE, segment.position["y"] // config.GRID_SIZE):
+                p2_collided = True
                 break
 
-    def check_player_collision(self, player, opponent):
-        """
-        Checks if the player's snake collides with walls, itself, or the opponent.
-        Assumes the snake has already moved.
-        """
-        head_x = player.snake.head_position["x"]
-        head_y = player.snake.head_position["y"]
-        
-        # Wall collision
-        if (head_x < 0 or head_x >= self.board.width or 
-            head_y < 0 or head_y >= self.board.height):
-            player.collided = True
-            self.calculate_winner(self.player1, self.player2)
-            return
-            
-        # Self collision
-        for i in range(1, len(player.snake.body)):
-            segment = player.snake.body[i]
-            if (segment.position["x"] // config.GRID_SIZE == head_x // config.GRID_SIZE and
-                segment.position["y"] // config.GRID_SIZE == head_y // config.GRID_SIZE):
-                player.collided = True
-                self.calculate_winner(self.player1, self.player2)
-                return
-            
-        # Collision with opponent's body
-        for segment in opponent.snake.body:
-            if (segment.position["x"] // config.GRID_SIZE == head_x // config.GRID_SIZE and
-                segment.position["y"] // config.GRID_SIZE == head_y // config.GRID_SIZE):
-                player.collided = True
-                self.calculate_winner(self.player1, self.player2)
-                return
+        # Player-to-player collisions
+        for segment in self.player2.snake.body:
+            if p1_head_grid == (segment.position["x"] // config.GRID_SIZE, segment.position["y"] // config.GRID_SIZE):
+                p1_collided = True
+                break
+        for segment in self.player1.snake.body:
+            if p2_head_grid == (segment.position["x"] // config.GRID_SIZE, segment.position["y"] // config.GRID_SIZE):
+                p2_collided = True
+                break
 
-        # Head-on collision with opponent
-        opponent_head_x = opponent.snake.head_position["x"]
-        opponent_head_y = opponent.snake.head_position["y"]
+        # Head-to-head collision
+        if p1_head_grid == p2_head_grid:
+            p1_collided = True
+            p2_collided = True
 
-        if (head_x // config.GRID_SIZE == opponent_head_x // config.GRID_SIZE and
-            head_y // config.GRID_SIZE == opponent_head_y // config.GRID_SIZE):
-            self.player1.collided = True
-            self.player2.collided = True
-            self.calculate_winner(self.player1, self.player2)
-            return
-        
-        # Obstacle collision
-        head_x = player.snake.head_position["x"]
-        head_y = player.snake.head_position["y"]
-        head_grid = (head_x // config.GRID_SIZE, head_y // config.GRID_SIZE)
-
+        # Obstacle collisions
         for obstacle in self.obstacle_locations:
-            if head_grid in obstacle.get_occupied_positions():  # must be grid-based
-                player.collided = True
-                self.calculate_winner(self.player1, self.player2)
-                return
+            if p1_head_grid in obstacle.get_occupied_positions():
+                p1_collided = True
+            if p2_head_grid in obstacle.get_occupied_positions():
+                p2_collided = True
 
-        
-    def check_food_collision(self, player):
-        """
-        Checks if the player's snake head is on any food.
-        If so, remove that food and spawn a new one in an unoccupied spot.
-        The player's snake grows and score increases by 1.
-        
-        Returns True if the sudden death food was eaten by this player, False otherwise.
-        """
-        eats_sudden_death_food = False
-        for food in list(self.food_locations): # Iterate over a copy to allow removal
-            if (food.x // config.GRID_SIZE == player.snake.head_position["x"] // config.GRID_SIZE and 
-                food.y // config.GRID_SIZE == player.snake.head_position["y"] // config.GRID_SIZE):
-                
-                self.food_locations.remove(food)
-                self.occupied[food.x // config.GRID_SIZE][food.y // config.GRID_SIZE] = {} 
+        # Food collisions
+        for food_item in list(self.food_locations): 
+            food_pos_grid = (food_item.x // config.GRID_SIZE, food_item.y // config.GRID_SIZE)
+            p1_eats = food_pos_grid == p1_head_grid and not p1_collided
+            p2_eats = food_pos_grid == p2_head_grid and not p2_collided
 
-                if self.sudden_death_active and food == self.sudden_death_food:
-                    eats_sudden_death_food = True
-                    # Do NOT set game_over or winner here. Let main loop decide for fairness.
-                    return eats_sudden_death_food # Exit early if sudden death food is eaten
+            if p1_eats or p2_eats:
+                if self.sudden_death_active and food_item == self.sudden_death_food:
+                    if p1_eats and p2_eats:
+                        if food_item in self.food_locations:
+                            self.food_locations.remove(food_item)
+                        self._spawn_food(is_sudden_death_food=True)
+                    elif p1_eats:
+                        self.winner = self.player1
+                        self.player1.snake.grow()
+                        self.player1.score += 1
+                        self.game_over = True
+                    elif p2_eats:
+                        self.winner = self.player2
+                        self.player2.snake.grow()
+                        self.player2.score += 1
+                        self.game_over = True
+                else:
+                    if p1_eats:
+                        self.player1.snake.grow()
+                        self.player1.score += 1
+                    if p2_eats:
+                        self.player2.snake.grow()
+                        self.player2.score += 1
+                    if food_item in self.food_locations:
+                        self.food_locations.remove(food_item)
+                    if not self.sudden_death_active:
+                        self._spawn_food()
 
-                # Spawn new food avoiding snakes and existing food
-                while True:
-                    new_food = Food()
-                    new_food_position_grid = (new_food.x // config.GRID_SIZE, new_food.y // config.GRID_SIZE)
+        # Update player status
+        self.player1.collided = p1_collided
+        self.player2.collided = p2_collided
 
-                    occupied_positions = set()
-                    for seg in self.player1.snake.body:
-                        occupied_positions.add((seg.position["x"] // config.GRID_SIZE, seg.position["y"] // config.GRID_SIZE))
-                    for seg in self.player2.snake.body:
-                        occupied_positions.add((seg.position["x"] // config.GRID_SIZE, seg.position["y"] // config.GRID_SIZE))
-                    for existing_food in self.food_locations:
-                        occupied_positions.add((existing_food.x // config.GRID_SIZE, existing_food.y // config.GRID_SIZE))
-                    for obs in self.obstacle_locations: # Added obstacle positions for food spawning
-                        occupied_positions.update(obs.get_occupied_positions())
-                    if self.sudden_death_food and self.sudden_death_food != new_food: # Don't place regular food on sudden death food
-                        occupied_positions.add((self.sudden_death_food.x // config.GRID_SIZE, self.sudden_death_food.y // config.GRID_SIZE))
+        # Determine winner if not already set by sudden death
+        if not self.game_over: 
+            if p1_collided and p2_collided:
+                if self.player1.score > self.player2.score:
+                    self.winner = self.player1
+                elif self.player2.score > self.player1.score:
+                    self.winner = self.player2
+                else:
+                    self.winner = None
+                self.game_over = True
+            elif p1_collided:
+                self.winner = self.player2
+                self.game_over = True
+            elif p2_collided:
+                self.winner = self.player1
+                self.game_over = True
 
-                    if new_food_position_grid not in occupied_positions:
-                        break
-
-                self.food_locations.append(new_food)
-                self.occupied[new_food.x // config.GRID_SIZE][new_food.y // config.GRID_SIZE] = new_food
-                
-                player.snake.grow()
-                player.score += 1
-                return eats_sudden_death_food # Return False for regular food
-            
-        return eats_sudden_death_food # Return False if no food was eaten
-    
     def start_pre_sudden_death(self):
         """
-        Initiates the pre-sudden death phase (displaying message).
+        Activates the pre-sudden death phase if not already active.
         """
         if self.pre_sudden_death_active or self.sudden_death_active:
-            return # Already in pre-sudden death or actual sudden death
+            return
 
         self.pre_sudden_death_active = True
         self.pre_sudden_death_start_time = pygame.time.get_ticks()
             
     def start_sudden_death(self):
         """
-        Initiates sudden death mode. Clears all existing food and spawns one special sudden death food.
+        Starts sudden death mode and spawns a special food item.
         """
         if self.sudden_death_active:
-            return # Already in sudden death
+            return
 
         self.sudden_death_active = True
         self.pre_sudden_death_active = False
-        self.sudden_death_start_time = pygame.time.get_ticks() # Record start time in milliseconds
-        
-       # Update the occupied grid with the new snake positions
-        for segment in self.player1.snake.body:
-            gx, gy = segment.position["x"], segment.position["y"]
-            if 0 <= gx < self.cols and 0 <= gy < self.rows:
-                self.occupied[gx][gy]  = self.player1.snake
-        for segment in self.player2.snake.body:
-            gx, gy = segment.position["x"] , segment.position["y"]
-             
-            if 0 <= gx < self.cols and 0 <= gy < self.rows:
-                self.occupied[gx][gy] = self.player2.snake 
-                
-        # Clear all existing food
-        for food in self.food_locations:
-            self.occupied[food.x // config.GRID_SIZE][food.y // config.GRID_SIZE] = {}
+        self.sudden_death_start_time = pygame.time.get_ticks()
         self.food_locations.clear()
-
-        # Spawn one sudden death food
         self._spawn_food(is_sudden_death_food=True)
-                        
+                            
     def calculate_winner(self, player1, player2):
         """
-        Determines the winner based on the game state.
-        If both players collide, the one with the higher score wins.
-        If both collide with the wall or each other, it's a tie.
+        Finalizes the game and determines the winner based on collisions and scores.
+        - If both players collided, the player with the higher score wins (or tie if scores match).
+        - If only one player collided, the other wins.
+        - If neither collided, the player with the higher score wins (or tie if scores match).
         """
+        # Exit early if the game is already marked as over (e.g., from sudden death resolution)
+        if self.game_over:
+            return
+
+        # Mark the game as over
         self.game_over = True
-        
-        if (player1.collided and player2.collided) or self.time_up:
+
+        # Case 1: Both players collided
+        if player1.collided and player2.collided:
             if player1.score == player2.score:
                 self.winner = None  # Tie
             elif player1.score > player2.score:
                 self.winner = player1
             else:
                 self.winner = player2
+
+        # Case 2: Only player1 collided
         elif player1.collided:
             self.winner = player2
+
+        # Case 3: Only player2 collided
         elif player2.collided:
             self.winner = player1
+
+        # Case 4: Neither collided — determine winner by score
         else:
-            # No collisions, winner by higher score or tie
             if player1.score == player2.score:
-                self.winner = None
+                self.winner = None  # Tie
             elif player1.score > player2.score:
                 self.winner = player1
             else:
                 self.winner = player2
-                
-        return
