@@ -72,6 +72,8 @@ Called once at game start to set your snake’s display name.
 ## Data Structures
 > **Note:**  
 > All coordinates (such as positions for snakes, food, and obstacles) passed to the controller are in pixel units, but are always aligned to the grid—meaning they are always multiples of `GRID_SIZE`. You should perform all movement and position calculations using `GRID_SIZE` to ensure your logic remains grid-aligned and compatible with the game’s rules.
+> 
+> **Important: Obstacle positions are GRID BASED and do not need to be converted further!**  
 
 ### `board_state`
 A dictionary containing info about the game world.
@@ -92,12 +94,14 @@ A dictionary containing info about the game world.
 ```
 
 > **Note:**  
-> Obstacle and Food x and y values are provided in pixels.  
+> Food x and y values are provided in pixels.  
 > Grid-based calculations should use the grid cell indices derived from these pixels, which can be obtained by dividing each coordinate by `GRID_SIZE` (found in `config/config.py`).  
 >
 > For example, if `food_x = 90` and `GRID_SIZE = 15`, then the grid cell index is:  
 > `grid_x = food_x // GRID_SIZE`  
 > `grid_x = 90 // 15 = 6`
+> 
+> Obstacle x and y values are provided in grid cells. They **do not** need to be converted further.  
 
 ### `player_state` / `opponent_state`
 
