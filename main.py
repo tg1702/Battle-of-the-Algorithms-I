@@ -66,15 +66,14 @@ def ai_worker(player_obj, board_state_data, player_state_data, opponent_state_da
     """
     try:
         direction = player_obj.controller.get_next_move(board_state_data, player_state_data, opponent_state_data)
-        result_queue.put(direction)
+        if direction in ["left", "right", "up", "down"]:
+            result_queue.put(direction)
+        else:
+            result_queue.put(None)
     except Exception as e:
         print(f"Error in {player_obj.name}'s controller: {e}")
         traceback.print_exc()
         result_queue.put(None)
-    finally:
-        # Ensure at least one value is always returned
-        if result_queue.empty():
-            result_queue.put("none")
 
 
 def get_player_state(player_obj):
@@ -174,24 +173,31 @@ while running:
                 p2_thread.start()
 
                 # Retrieve AI move decisions with timeout
+                p1_thread.join(timeout=config.CONTROLLER_TIMEOUT_SECONDS)
+                p2_thread.join(timeout=config.CONTROLLER_TIMEOUT_SECONDS)
+                
                 try:
-                    p1_direction = p1_result_queue.get(timeout=config.CONTROLLER_TIMEOUT_SECONDS)
-                    if p1_direction not in ["left", "right", "up", "down"]:
-                        print(f"Invalid move returned by Player {player1.id}: {p1_direction}. Using current direction.")
+                    p1_direction = p1_result_queue.get_nowait()
+                    
+                    if p1_direction is None:
+                        print("Player 1 controller failed to return a valid result. Using current direction.")
                         p1_direction = player1.snake.direction
+                        
                 except queue.Empty:
                     print("Player 1 controller timed out. Using current direction.")
                     p1_direction = player1.snake.direction
 
                 try:
-                    p2_direction = p2_result_queue.get(timeout=config.CONTROLLER_TIMEOUT_SECONDS)
-                    if p2_direction not in ["left", "right", "up", "down"]:
-                        print(f"Invalid move returned by Player {player2.id}: {p2_direction}. Using current direction.")
+                    p2_direction = p2_result_queue.get_nowait()
+                    
+                    if p2_direction is None:
+                        print("Player 2 controller failed to return a valid result. Using current direction.")
                         p2_direction = player2.snake.direction
+                        
                 except queue.Empty:
                     print("Player 2 controller timed out. Using current direction.")
                     p2_direction = player2.snake.direction
-
+                    
                 # Apply directions and move snakes
                 player1.snake.direction = p1_direction
                 player2.snake.direction = p2_direction
