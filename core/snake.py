@@ -56,9 +56,6 @@ class Snake:
         Moves the snake one grid unit in its current direction.
         This method is now called discretely based on the AI update interval.
         """
-        # Store current head position to become the first body segment's new position
-        previous_head_position = self.head_position.copy()
-
         # Update head position based on current direction
         if self.direction == "left":
             self.head_position["x"] -= self.size
@@ -68,7 +65,7 @@ class Snake:
             self.head_position["y"] -= self.size
         elif self.direction == "down":
             self.head_position["y"] += self.size
-
+            
         # Update body segments
         # Move all segments to the position of the segment in front of them, starting from the tail
         if self.body:
@@ -79,7 +76,7 @@ class Snake:
                 self.body[i].position = self.body[i-1].position.copy() # Move segment to previous segment's pos
 
             # The first body segment (which was previously the head) gets the old head position
-            self.body[0].position = previous_head_position.copy()
+            self.body[0].position = self.head_position.copy()
 
             # Update tail position
             self.tail_position = self.body[-1].position.copy()

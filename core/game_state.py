@@ -117,8 +117,8 @@ class GameState:
         Resolves all collisions in the game simultaneously and updates the game state accordingly.
         """
         p1_head_grid = (self.player1.snake.head_position["x"] // config.GRID_SIZE, self.player1.snake.head_position["y"] // config.GRID_SIZE)
-        p2_head_grid = (self.player2.snake.head_position["x"] // config.GRID_SIZE, self.player2.snake.head_position["y"] // config.GRID_SIZE)
-
+        p2_head_grid = (self.player2.snake.head_position["x"] // config.GRID_SIZE, self.player2.snake.head_position["y"] // config.GRID_SIZE)            
+        
         p1_collided = False
         p2_collided = False
         
@@ -129,11 +129,16 @@ class GameState:
             p2_collided = True
 
         # Self-collisions
-        for segment in self.player1.snake.body:
+        for i in range(1, len(self.player1.snake.body)):
+            segment = self.player1.snake.body[i]
+            
             if p1_head_grid == (segment.position["x"] // config.GRID_SIZE, segment.position["y"] // config.GRID_SIZE):
                 p1_collided = True
                 break
-        for segment in self.player2.snake.body:
+            
+        for i in range(1, len(self.player2.snake.body)):
+            segment = self.player2.snake.body[i]
+            
             if p2_head_grid == (segment.position["x"] // config.GRID_SIZE, segment.position["y"] // config.GRID_SIZE):
                 p2_collided = True
                 break
@@ -149,7 +154,10 @@ class GameState:
                 break
 
         # Head-to-head collision
-        if p1_head_grid == p2_head_grid:
+        horizontal_collision = p1_head_grid[0] + 1 == p2_head_grid[0] and p1_head_grid[1] == p2_head_grid[1]
+        vertical_collision = p1_head_grid[1] + 1 == p2_head_grid[1] and p1_head_grid[0] == p2_head_grid[0]
+        
+        if horizontal_collision or vertical_collision: 
             p1_collided = True
             p2_collided = True
 
