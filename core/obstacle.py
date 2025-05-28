@@ -37,11 +37,11 @@ class Obstacle:
         """
         for i in range(self.length):
             if self.orientation == "horizontal":
-                tile_x = self.x + i * self.size
-                tile_y = self.y
-            else:
-                tile_x = self.x
+                tile_x = self.x 
                 tile_y = self.y + i * self.size
+            else:
+                tile_x = self.x + i * self.size
+                tile_y = self.y 
                 
             board.board.blit(self.tile_image, (tile_x, tile_y))
 
