@@ -14,11 +14,11 @@ class Obstacle:
         self.length = random.randint(4, 6)
 
         if self.orientation == "horizontal":
-            self.width = self.size * self.length
-            self.height = self.size
-        else:
             self.width = self.size
             self.height = self.size * self.length
+        else:
+            self.width = self.size * self.length
+            self.height = self.size
 
         max_x = (config.BOARD_WIDTH - self.width) // self.size
         max_y = (config.BOARD_HEIGHT - self.height) // self.size
