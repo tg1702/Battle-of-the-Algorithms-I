@@ -20,8 +20,8 @@ class Obstacle:
             self.width = self.size
             self.height = self.size * self.length
 
-        max_x = (config.BOARD_WIDTH - self.width) // self.size
-        max_y = (config.BOARD_HEIGHT - self.height) // self.size
+        max_x = (config.BOARD_HEIGHT - self.height) // self.size
+        max_y = (config.BOARD_WIDTH - self.width) // self.size
 
         self.x = random.randint(0, max_x) * self.size
         self.y = random.randint(0, max_y) * self.size
