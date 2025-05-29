@@ -101,7 +101,7 @@ You are welcome to use AI-based tools (such as GitHub Copilot, ChatGPT, or simil
 The goal is to celebrate your problem-solving and programming skills. AI is a tool to assist—not a replacement for your own creativity and judgment.
 
 ## Competition Timeline
-- 👩🏾‍💻 Coding Begins: May 25th @ 3pm
+- 👩🏾‍💻 Coding Begins: May 26th @ 3pm
 - 🗃 Coding Ends: May 31st @ 3pm
 - 👾 Live Tournament: June 7th @ 6pm on Discord
 - 👑 Winner Announced: June 7th (End of Live Tournament)
