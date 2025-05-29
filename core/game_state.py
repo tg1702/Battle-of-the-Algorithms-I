@@ -122,24 +122,12 @@ class GameState:
         p1_collided = False
         p2_collided = False
         
-        # Helper function to get the next head position of a player's snake
-        def get_next_head(pos, direction):
-                x, y = pos
-                if direction == "up": return (x, y - 1)
-                if direction == "down": return (x, y + 1)
-                if direction == "left": return (x - 1, y)
-                if direction == "right": return (x + 1, y)
-                return (x, y)
-            
-        p1_next_head = get_next_head(p1_head_grid, self.player1.snake.direction)
-        p2_next_head = get_next_head(p2_head_grid, self.player2.snake.direction)
-        
         # Wall collisions
-        if not (0 <= p1_next_head[0] < self.cols and 0 <= p1_next_head[1] < self.rows):
+        if not (0 <= p1_head_grid[0] < self.cols and 0 <= p1_head_grid[1] < self.rows):
             p1_collided = True
             print(self.player1.name, "collided with a wall!")
             
-        if not (0 <= p2_next_head[0] < self.cols and 0 <= p2_next_head[1] < self.rows):
+        if not (0 <= p2_head_grid[0] < self.cols and 0 <= p2_head_grid[1] < self.rows):
             p2_collided = True
             print(self.player2.name, "collided with a wall!")
             
@@ -174,38 +162,20 @@ class GameState:
                 break
 
         # Head on collision
-        # True head-on collision: both snakes will move into the same cell
-        if p1_next_head == p2_next_head:
+        if p1_head_grid == p2_head_grid:
             p1_collided = True
             p2_collided = True
-            print("Direct head-on collision!")
-
-        # "Swap" collision: snakes swap positions
-        if p1_next_head == p2_head_grid and p2_next_head == p1_head_grid:
-            p1_collided = True
-            p2_collided = True
-            print("Head swap collision!")
+            print("Head-on collision!")
 
         # Obstacle collisions
-        p1_will_hit_obstacle = False
         for obstacle in self.obstacle_locations:
-            if p1_next_head in obstacle.get_occupied_positions():
-                p1_will_hit_obstacle = True
-                break
+            if p1_head_grid in obstacle.get_occupied_positions():
+                p1_collided = True
+                print(self.player1.name, "collided with an obstacle!")
 
-        if p1_will_hit_obstacle:
-            p1_collided = True
-            print(self.player1.name, "collided with an obstacle!")
-        
-        p2_will_hit_obstacle = False
-        for obstacle in self.obstacle_locations:
-            if p2_next_head in obstacle.get_occupied_positions():
-                p2_will_hit_obstacle = True
-                break
-
-        if p2_will_hit_obstacle:
-            p2_collided = True
-            print(self.player2.name, "collided with an obstacle!")
+            if p2_head_grid in obstacle.get_occupied_positions():
+                p2_collided = True
+                print(self.player2.name, "collided with an obstacle!")
 
         # Food collisions
         for food_item in list(self.food_locations): 
