@@ -49,28 +49,24 @@ class GameState:
                 if not any(pos in occupied_positions for pos in obstacle_positions):
                     self.obstacle_locations.append(new_obstacle)
                     break
-                
+
     def _get_all_occupied_grid_positions(self, include_future_heads=True):
         """
         Returns all occupied grid positions as a set of (row, col) tuples.
         If include_future_heads is True, current snake heads are included.
         """
         occupied_positions = set()
-        
-        # Helper to convert pixel to (row, col) grid coordinates
-        def pixel_to_grid(pixel_x, pixel_y):
-            return (pixel_y // config.GRID_SIZE, pixel_x // config.GRID_SIZE)
 
         # Include future snake heads
         if include_future_heads:
-            occupied_positions.add(pixel_to_grid(self.player1.snake.head_position["x"], self.player1.snake.head_position["y"]))
-            occupied_positions.add(pixel_to_grid(self.player2.snake.head_position["x"], self.player2.snake.head_position["y"]))
+            occupied_positions.add((self.player1.snake.head_position["row"], self.player1.snake.head_position["col"]))
+            occupied_positions.add((self.player2.snake.head_position["row"], self.player2.snake.head_position["col"]))
         
         # Snake bodies
         for segment in self.player1.snake.body:
-            occupied_positions.add(pixel_to_grid(segment.position["x"], segment.position["y"]))
+            occupied_positions.add((segment.position["row"], segment.position["col"]))
         for segment in self.player2.snake.body:
-            occupied_positions.add(pixel_to_grid(segment.position["x"], segment.position["y"]))
+            occupied_positions.add((segment.position["row"], segment.position["col"]))
         
         # Food locations
         for food in self.food_locations:
@@ -121,12 +117,8 @@ class GameState:
         Resolves all collisions in the game simultaneously and updates the game state accordingly.
         All grid positions are handled as (row, col).
         """
-        # Helper to convert pixel to (row, col) grid coordinates
-        def pixel_to_grid(pixel_x, pixel_y):
-            return (pixel_y // config.GRID_SIZE, pixel_x // config.GRID_SIZE)
-
-        p1_head_grid = pixel_to_grid(self.player1.snake.head_position["x"], self.player1.snake.head_position["y"])
-        p2_head_grid = pixel_to_grid(self.player2.snake.head_position["x"], self.player2.snake.head_position["y"])
+        p1_head_grid = (self.player1.snake.head_position["row"], self.player1.snake.head_position["col"])
+        p2_head_grid = (self.player2.snake.head_position["row"], self.player2.snake.head_position["col"])
         
         p1_collided = False
         p2_collided = False
@@ -144,28 +136,26 @@ class GameState:
         # Self-collisions
         for i in range(1, len(self.player1.snake.body)):
             segment = self.player1.snake.body[i]
-            
-            if p1_head_grid == pixel_to_grid(segment.position["x"], segment.position["y"]):
+            if p1_head_grid == (segment.position["row"], segment.position["col"]):
                 p1_collided = True
                 print(self.player1.name, "self-collided!")
                 break
             
         for i in range(1, len(self.player2.snake.body)):
             segment = self.player2.snake.body[i]
-            
-            if p2_head_grid == pixel_to_grid(segment.position["x"], segment.position["y"]):
+            if p2_head_grid == (segment.position["row"], segment.position["col"]):
                 p2_collided = True
                 print(self.player2.name, "self-collided!")
                 break
 
         # Player-to-player collisions
         for segment in self.player2.snake.body:
-            if p1_head_grid == pixel_to_grid(segment.position["x"], segment.position["y"]):
+            if p1_head_grid == (segment.position["row"], segment.position["col"]):
                 p1_collided = True
                 print(self.player1.name, "hit", self.player2.name + "!")
                 break
         for segment in self.player1.snake.body:
-            if p2_head_grid == pixel_to_grid(segment.position["x"], segment.position["y"]):
+            if p2_head_grid == (segment.position["row"], segment.position["col"]):
                 p2_collided = True
                 print(self.player2.name, "hit", self.player1.name + "!")
                 break
