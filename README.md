@@ -3,7 +3,7 @@
 A week-long AI coding tournament where developers compete by programming intelligent snakes for survival in a strategic grid-based game. Participants submit Python-based AI algorithms that navigate, collect food, and avoid obstacles while competing against rival snakes. The competition follows an elimination-style format, leading to a final showdown to determine the ultimate champion!  
 
 ## Competition Timeline
-- 👩🏾‍💻 Coding Begins: May 25th @ 3pm
+- 👩🏾‍💻 Coding Begins: May 26th @ 3pm
 - 🗃 Coding Ends: May 31st @ 3pm
 - 👾 Live Tournament: June 7th @ 6pm on Discord
 - 👑 Winner Announced: June 7th (End of Live Tournament)
