@@ -152,7 +152,7 @@ while running:
                     "height": game_board.height,
                     "rows": game_board.rows,
                     "cols": game_board.cols,
-                    "food_locations": [(food.x, food.y) for food in state.food_locations],
+                    "food_locations": [(food.grid_row, food.grid_col) for food in state.food_locations],
                     "obstacle_locations": list(chain.from_iterable(obs.get_occupied_positions() for obs in state.obstacle_locations))
                 }
 

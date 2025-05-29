@@ -9,8 +9,10 @@ class Food:
     """
     def __init__(self):
         self.size = config.GRID_SIZE
-        self.x = random.randint(0, (config.BOARD_WIDTH // self.size) - 1) * self.size
-        self.y = random.randint(0, (config.BOARD_HEIGHT // self.size) - 1) * self.size
+        self.grid_row = random.randint(0, (config.BOARD_HEIGHT // self.size) - 1)
+        self.grid_col = random.randint(0, (config.BOARD_WIDTH // self.size) - 1)
+        self.x = self.grid_col * self.size  
+        self.y = self.grid_row * self.size  
         self.hit = False
         
     def draw(self, board):
