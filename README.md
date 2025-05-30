@@ -1,13 +1,13 @@
 # Battle of the Algorithms 🏆🐍
 
-A week-long AI coding tournament where developers compete by programming intelligent snakes for survival in a strategic grid-based game. Participants submit Python-based AI algorithms that navigate, collect food, and avoid obstacles while competing against rival snakes. The competition follows an elimination-style format, leading to a final showdown to determine the ultimate champion!  
+A 2 week AI coding tournament where developers compete by programming intelligent snakes for survival in a strategic grid-based game. Participants submit Python-based AI algorithms that navigate, collect food, and avoid obstacles while competing against rival snakes. The competition follows an elimination-style format, leading to a final showdown to determine the ultimate champion!  
 
 ## Competition Timeline
 - 👩🏾‍💻 Coding Begins: May 25th @ 3pm
-- 🗃 Coding Ends: June 1st @ 3pm
-- 👾 Live Tournament: June 7th @ 6pm on Discord
-- 👑 Winner Announced: June 7th (End of Live Tournament)
-- 📹 Video Submissions: June  7th @ 11pm
+- 🗃 Coding Ends: June 7th @ 3pm
+- 👾 Live Tournament: June 14th @ 6pm on Discord
+- 👑 Winner Announced: June 14th (End of Live Tournament)
+- 📹 Video Submissions: June  14th @ 11pm
 
 ## Key Features  
 
