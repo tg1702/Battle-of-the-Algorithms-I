@@ -83,7 +83,7 @@ def get_player_state(player_obj):
     return {
         "id": player_obj.id,
         "head_position": player_obj.snake.head_position.copy(),
-        "body": [{"x": seg.position["x"], "y": seg.position["y"]} for seg in player_obj.snake.body],
+        "body": [{"row": seg.position["row"], "col": seg.position["col"]} for seg in player_obj.snake.body],
         "direction": player_obj.snake.direction,
         "score": player_obj.score,
         "length": len(player_obj.snake.body)
@@ -152,7 +152,7 @@ while running:
                     "height": game_board.height,
                     "rows": game_board.rows,
                     "cols": game_board.cols,
-                    "food_locations": [(food.x, food.y) for food in state.food_locations],
+                    "food_locations": [(food.grid_row, food.grid_col) for food in state.food_locations],
                     "obstacle_locations": list(chain.from_iterable(obs.get_occupied_positions() for obs in state.obstacle_locations))
                 }
 

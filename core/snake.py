@@ -16,7 +16,9 @@ class SnakeSegment:
         """
         Draws the snake segment on the given board surface.
         """
-        segment = pygame.Rect(self.position["x"], self.position["y"], self.size, self.size)
+        x = self.position["col"] * self.size
+        y = self.position["row"] * self.size
+        segment = pygame.Rect(x, y, self.size, self.size)
         pygame.draw.rect(board, self.color, segment)
         pygame.draw.rect(board, self.border_color, segment, 2)
 
@@ -58,13 +60,13 @@ class Snake:
         """
         # Update head position based on current direction
         if self.direction == "left":
-            self.head_position["x"] -= self.size
+            self.head_position["col"] -= 1
         elif self.direction == "right":
-            self.head_position["x"] += self.size
+            self.head_position["col"] += 1
         elif self.direction == "up":
-            self.head_position["y"] -= self.size
+            self.head_position["row"] -= 1
         elif self.direction == "down":
-            self.head_position["y"] += self.size
+            self.head_position["row"] += 1
             
         # Update body segments
         # Move all segments to the position of the segment in front of them, starting from the tail

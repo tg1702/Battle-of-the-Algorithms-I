@@ -49,28 +49,28 @@ class GameState:
                 if not any(pos in occupied_positions for pos in obstacle_positions):
                     self.obstacle_locations.append(new_obstacle)
                     break
-                
+
     def _get_all_occupied_grid_positions(self, include_future_heads=True):
         """
-        Returns all occupied grid positions (snakes, food, and obstacles).
+        Returns all occupied grid positions as a set of (row, col) tuples.
         If include_future_heads is True, current snake heads are included.
         """
         occupied_positions = set()
-        
+
         # Include future snake heads
         if include_future_heads:
-            occupied_positions.add((self.player1.snake.head_position["x"] // config.GRID_SIZE, self.player1.snake.head_position["y"] // config.GRID_SIZE))
-            occupied_positions.add((self.player2.snake.head_position["x"] // config.GRID_SIZE, self.player2.snake.head_position["y"] // config.GRID_SIZE))
+            occupied_positions.add((self.player1.snake.head_position["row"], self.player1.snake.head_position["col"]))
+            occupied_positions.add((self.player2.snake.head_position["row"], self.player2.snake.head_position["col"]))
         
         # Snake bodies
         for segment in self.player1.snake.body:
-            occupied_positions.add((segment.position["x"] // config.GRID_SIZE, segment.position["y"] // config.GRID_SIZE))
+            occupied_positions.add((segment.position["row"], segment.position["col"]))
         for segment in self.player2.snake.body:
-            occupied_positions.add((segment.position["x"] // config.GRID_SIZE, segment.position["y"] // config.GRID_SIZE))
+            occupied_positions.add((segment.position["row"], segment.position["col"]))
         
         # Food locations
         for food in self.food_locations:
-            occupied_positions.add((food.x // config.GRID_SIZE, food.y // config.GRID_SIZE))
+            occupied_positions.add((food.grid_row, food.grid_col))
         
         # Obstacles
         for obs in self.obstacle_locations:
@@ -93,7 +93,7 @@ class GameState:
 
         while not spawned and attempts < max_attempts:
             new_food = Food()
-            food_position_grid = (new_food.x // config.GRID_SIZE, new_food.y // config.GRID_SIZE)
+            food_position_grid = (new_food.grid_row, new_food.grid_col)
             occupied_positions = self._get_all_occupied_grid_positions(include_future_heads=True)
             
             if food_position_grid in occupied_positions:
@@ -115,31 +115,20 @@ class GameState:
     def resolve_collisions(self):
         """
         Resolves all collisions in the game simultaneously and updates the game state accordingly.
+        All grid positions are handled as (row, col).
         """
-        p1_head_grid = (self.player1.snake.head_position["x"] // config.GRID_SIZE, self.player1.snake.head_position["y"] // config.GRID_SIZE)
-        p2_head_grid = (self.player2.snake.head_position["x"] // config.GRID_SIZE, self.player2.snake.head_position["y"] // config.GRID_SIZE)            
+        p1_head_grid = (self.player1.snake.head_position["row"], self.player1.snake.head_position["col"])
+        p2_head_grid = (self.player2.snake.head_position["row"], self.player2.snake.head_position["col"])
         
         p1_collided = False
         p2_collided = False
         
-        # Helper function to get the next head position of a player's snake
-        def get_next_head(pos, direction):
-                x, y = pos
-                if direction == "up": return (x, y - 1)
-                if direction == "down": return (x, y + 1)
-                if direction == "left": return (x - 1, y)
-                if direction == "right": return (x + 1, y)
-                return (x, y)
-            
-        p1_next_head = get_next_head(p1_head_grid, self.player1.snake.direction)
-        p2_next_head = get_next_head(p2_head_grid, self.player2.snake.direction)
-        
         # Wall collisions
-        if not (0 <= p1_next_head[0] < self.cols and 0 <= p1_next_head[1] < self.rows):
+        if not (0 <= p1_head_grid[0] < self.rows and 0 <= p1_head_grid[1] < self.cols):
             p1_collided = True
             print(self.player1.name, "collided with a wall!")
             
-        if not (0 <= p2_next_head[0] < self.cols and 0 <= p2_next_head[1] < self.rows):
+        if not (0 <= p2_head_grid[0] < self.rows and 0 <= p2_head_grid[1] < self.cols):
             p2_collided = True
             print(self.player2.name, "collided with a wall!")
             
@@ -147,72 +136,53 @@ class GameState:
         # Self-collisions
         for i in range(1, len(self.player1.snake.body)):
             segment = self.player1.snake.body[i]
-            
-            if p1_head_grid == (segment.position["x"] // config.GRID_SIZE, segment.position["y"] // config.GRID_SIZE):
+            if p1_head_grid == (segment.position["row"], segment.position["col"]):
                 p1_collided = True
                 print(self.player1.name, "self-collided!")
                 break
             
         for i in range(1, len(self.player2.snake.body)):
             segment = self.player2.snake.body[i]
-            
-            if p2_head_grid == (segment.position["x"] // config.GRID_SIZE, segment.position["y"] // config.GRID_SIZE):
+            if p2_head_grid == (segment.position["row"], segment.position["col"]):
                 p2_collided = True
                 print(self.player2.name, "self-collided!")
                 break
 
         # Player-to-player collisions
         for segment in self.player2.snake.body:
-            if p1_head_grid == (segment.position["x"] // config.GRID_SIZE, segment.position["y"] // config.GRID_SIZE):
+            if p1_head_grid == (segment.position["row"], segment.position["col"]):
                 p1_collided = True
                 print(self.player1.name, "hit", self.player2.name + "!")
                 break
         for segment in self.player1.snake.body:
-            if p2_head_grid == (segment.position["x"] // config.GRID_SIZE, segment.position["y"] // config.GRID_SIZE):
+            if p2_head_grid == (segment.position["row"], segment.position["col"]):
                 p2_collided = True
                 print(self.player2.name, "hit", self.player1.name + "!")
                 break
 
         # Head on collision
-        # True head-on collision: both snakes will move into the same cell
-        if p1_next_head == p2_next_head:
+        if p1_head_grid == p2_head_grid:
             p1_collided = True
             p2_collided = True
-            print("Direct head-on collision!")
-
-        # "Swap" collision: snakes swap positions
-        if p1_next_head == p2_head_grid and p2_next_head == p1_head_grid:
-            p1_collided = True
-            p2_collided = True
-            print("Head swap collision!")
-
+            print("Head-on collision!")
+            
         # Obstacle collisions
-        p1_will_hit_obstacle = False
         for obstacle in self.obstacle_locations:
-            if p1_next_head in obstacle.get_occupied_positions():
-                p1_will_hit_obstacle = True
-                break
+            if p1_head_grid in obstacle.get_occupied_positions():
+                p1_collided = True
+                print(self.player1.name, "collided with an obstacle!")
 
-        if p1_will_hit_obstacle:
-            p1_collided = True
-            print(self.player1.name, "collided with an obstacle!")
-        
-        p2_will_hit_obstacle = False
-        for obstacle in self.obstacle_locations:
-            if p2_next_head in obstacle.get_occupied_positions():
-                p2_will_hit_obstacle = True
-                break
-
-        if p2_will_hit_obstacle:
-            p2_collided = True
-            print(self.player2.name, "collided with an obstacle!")
+            if p2_head_grid in obstacle.get_occupied_positions():
+                p2_collided = True
+                print(self.player2.name, "collided with an obstacle!")
 
         # Food collisions
         for food_item in list(self.food_locations): 
-            food_pos_grid = (food_item.x // config.GRID_SIZE, food_item.y // config.GRID_SIZE)
+            food_pos_grid = (food_item.grid_row, food_item.grid_col)
+            
             p1_eats = food_pos_grid == p1_head_grid and not p1_collided
             p2_eats = food_pos_grid == p2_head_grid and not p2_collided
-
+            
             if p1_eats or p2_eats:
                 if self.sudden_death_active and food_item == self.sudden_death_food:
                     if p1_eats and p2_eats:

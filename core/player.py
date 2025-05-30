@@ -18,13 +18,12 @@ class Player:
         self.board = board  
         self.collided = False     
 
-        position = {"x": 0, "y": board.height // 2 - board.height //2 % 15 }
+        position = {"row": board.rows // 2, "col": 0}
         
         self.snake = snake.Snake(position, "right", self.color, self.border_color)
         
         if self.id == 2: 
-            position = {"x": board.width - self.snake.size, "y": board.height // 2 - board.height // 2 % 15 }
-            
+            position = {"row": board.rows // 2, "col": board.cols - 1}
             self.snake.head_position = position.copy()
             self.snake.body[0].position = position.copy()
             self.snake.direction = "left"

@@ -21,7 +21,7 @@ This document describes how to create a Python AI controller for the Battle of t
 
 ## How the Controller Works
 
-- Player controller files are Python files that contain the logic for how a snake in the game will behave.  These files are placed in the `controllers/` directory.
+- Player controller files are Python files that contain the logic for how a snake in the game will behave. These files are placed in the `controllers/` directory.
 
 - The game engine will import your controller and call specific functions (`get_next_move`, `set_player_name`) as needed.
 - The engine passes game state data to your controller every frame and expects a move in response.
@@ -71,9 +71,8 @@ Called once at game start to set your snake’s display name.
 
 ## Data Structures
 > **Note:**  
-> All coordinates (such as positions for snakes, food, and obstacles) passed to the controller are in pixel units, but are always aligned to the grid—meaning they are always multiples of `GRID_SIZE`. You should perform all movement and position calculations using `GRID_SIZE` to ensure your logic remains grid-aligned and compatible with the game’s rules.
-> 
-> **Important: Obstacle positions are GRID BASED and do not need to be converted further!**  
+> All coordinates (such as positions for snakes, food, and obstacles) passed to the controller are now in **grid cell units** (row, col).
+> You should perform all movement and position calculations using these grid cell indices to ensure your logic is compatible with the game’s rules.
 
 ### `board_state`
 A dictionary containing info about the game world.
@@ -84,24 +83,20 @@ A dictionary containing info about the game world.
     "height": int,             # Board height in pixels
     "rows": int,               # Board rows 
     "cols": int,               # Board columns 
-    "food_locations": [        # List of (x, y) tuples for each food item
-        (x1, y1), (x2, y2), ...
+    "food_locations": [        # List of (row, col) tuples for each food item (grid-based)
+        (row1, col1), (row2, col2), ...
     ],
-    "obstacle_locations": [    # List of (x, y) tuples for each occupied cell by obstacles
-        (ox1, oy1), (ox2, oy2), ...
+    "obstacle_locations": [    # List of (row, col) tuples for each occupied cell by obstacles (grid-based)
+        (row1, col1), (row2, col2), ...
     ]
 }
 ```
 
 > **Note:**  
-> Food x and y values are provided in pixels.  
-> Grid-based calculations should use the grid cell indices derived from these pixels, which can be obtained by dividing each coordinate by `GRID_SIZE` (found in `config/config.py`).  
->
-> For example, if `food_x = 90` and `GRID_SIZE = 15`, then the grid cell index is:  
-> `grid_x = food_x // GRID_SIZE`  
-> `grid_x = 90 // 15 = 6`
+> **Food locations and obstacle locations are both provided as grid cell (row, col) tuples.**  
+> You do **not** need to convert these values further.  
 > 
-> Obstacle x and y values are provided in grid cells. They **do not** need to be converted further.  
+> For example, if you receive a food location `(6, 5)`, it refers to the grid cell at row 6, column 5.
 
 ### `player_state` / `opponent_state`
 
@@ -109,15 +104,15 @@ A dictionary representing either your snake or your opponent. Structure is ident
 
 ```python
 {
-    "id": int,                        # Player number (1 or 2)
-    "head_position": {"x": int, "y": int},   # Current head position in pixels
-    "body": [                                # List of segment positions, head first
-        {"x": int, "y": int},
+    "id": int,                               # Player number (1 or 2)
+    "head_position": {"row": int, "col": int},       # Current head position in grid cells
+    "body": [                                       # List of segment positions, head first, in grid cells
+        {"row": int, "col": int},
         ...
     ],
-    "direction": "left"|"right"|"up"|"down", # Current direction
-    "score": int,                            # Current score
-    "length": int                            # Number of body segments
+    "direction": "left"|"right"|"up"|"down",        # Current direction
+    "score": int,                                   # Current score
+    "length": int                                   # Number of body segments
 }
 ```
 
@@ -147,14 +142,14 @@ def set_player_name():
 def get_next_move(board_state, player_state, opponent_state):
     head = player_state["head_position"]
     if board_state["food_locations"]:
-        target_x, target_y = board_state["food_locations"][0]
-        if target_x < head["x"]:
+        target_row, target_col = board_state["food_locations"][0]
+        if target_col < head["col"]:
             return "left"
-        elif target_x > head["x"]:
+        elif target_col > head["col"]:
             return "right"
-        elif target_y < head["y"]:
+        elif target_row < head["row"]:
             return "up"
-        elif target_y > head["y"]:
+        elif target_row > head["row"]:
             return "down"
     # Default: keep moving in the current direction
     return player_state["direction"]
@@ -166,13 +161,13 @@ def get_next_move(board_state, player_state, opponent_state):
 
 - **Handle Edge Cases:** Avoid walls and obstacles by checking `obstacle_locations` and board boundaries.
 - **Be Efficient:** Your AI must return within the configured timeout (see `CONTROLLER_TIMEOUT_SECONDS` in config). Taking too long to return a move will result in a timeout and skipped turn.
-- **Default Safely:** If you can't decide, continue in your current direction. 
+- **Default Safely:** If you can't decide, continue in your current direction.
 
 ---
 
 ## Additional Resources
 
-- Example Controller: [`controllers/example.py`](../controllers/example_controller.py)
+- Example Controller: [`controllers/example_controller.py`](../controllers/example_controller.py)
 - Algorithm Guidelines:  [`algorithm_guidelines.md`](algorithm_guidelines.md)
 - Python Docs: [python.org](https://docs.python.org/3/)
 
