@@ -5,7 +5,7 @@ Please follow the instructions below when recording and submitting your video. T
 ---
 
 ## ⌛Deadline: 
-June 7th - 11:00 PM
+June 14th @ 11:00 PM
 
 
 ## 📤 Submission Instructions

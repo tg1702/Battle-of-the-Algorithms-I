@@ -31,5 +31,4 @@
 ---
 
 **Important:**  
-- All coordinates provided to your controller (e.g., `head_position`, food, obstacles) are in pixel units, but are always aligned to the grid (i.e., multiples of `GRID_SIZE`).
-- To stay compatible with different grid settings, never hardcode movement values—always use `GRID_SIZE` for movement calculations.
+- All coordinates provided to your controller (such as `head_position`, `food locations`, and `obstacles`) are row and column indices that directly correspond to the number of rows and columns in the grid.

@@ -69,7 +69,7 @@ Participants will program an AI version of the classic **Snake game**, where the
 To participate in the **Battle of the Algorithms**, each developer will need to submit their AI algorithm as a Python script that can be executed by the backend during match execution. Here are the key steps for submitting and integrating your algorithm into the tournament:
 
 ### Submission Deadline
-- All algorithm submissions **must be received by 3:00 PM on May 31st**.
+- All algorithm submissions **must be received by 3:00 PM on June 7th**.
 - **Late submissions will not be accepted**, and players will be disqualified.
 
 ### Submission Method
