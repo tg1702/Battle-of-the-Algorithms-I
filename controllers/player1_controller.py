@@ -15,8 +15,10 @@
 from . import a_star
 from config import config
 
+grid = None
+
 def set_player_name():
-    return "SnakeBot"
+    return "solid_snake"
 
 
 def print_grid(grid, start=None, goal=None):
@@ -42,60 +44,76 @@ def get_next_move(board_state, player_state, opponent_state):
 
     obstacles = board_state["obstacle_locations"]
     fruits = board_state["food_locations"]
+    body = player_state["body"]
+    opponent_body = opponent_state["body"]
+    opponent_head = opponent_state["head_position"]
 
     rows = board_state["rows"]
     cols = board_state["cols"]
 
-    grid = [[0 if r == 0 or r == rows - 1 or c == 0 or c == cols - 1 else 1 for r in range(rows)] for c in range(cols)]
+    
+    grid = [[1 for c in range(cols)] for r in range(rows)]
 
     for ob in obstacles:
         grid[ob[0]][ob[1]] = 0
 
-    print(len(grid))
+    for b in body:
+        grid[b["row"]][b["col"]] = 0
+
+    for o in opponent_body:
+        grid[o["row"]][o["col"]] = 0        
+
+
+    
     
 
     
     
-    start = (head["x"] // 15, head["y"] // 15)
+    start = (head["row"], head["col"])
 
-    fruits.sort(key=lambda x: (x[0] - head["x"])**2 + (x[1] - head["y"])**2)
-    goal = (fruits[0][0] // 15, fruits[0][1] // 15)
+    fruits.sort(key=lambda x: (x[0] - head["row"])**2 + (x[1] - head["col"])**2)
+    
+    if (opponent_head["row"] - fruits[0][0])**2 < (head["row"] - fruits[0][0])**2 and (opponent_head["row"] - fruits[0][0])**2 < (head["col"] - fruits[0][0])**2 and len(fruits) > 1:
+        goal = (fruits[1][0], fruits[1][1])
+    else:
+        goal = (fruits[0][0], fruits[0][1])
 
-    
-    
     path = a_star.a_star(start, goal, grid)
-    if path:    
+    
+    if path and len(path) > 1:   
         ans = path[1]
+    elif path and len(path) == 1:
+        ans = path[0]
     else:
         return direction
 
-    #print_grid(grid, start, goal)
+    
 
     if (start[0] + -1, start[1] + 0) == ans:
+        if direction != "down": # accounting for snake bumping into itself
+            direction = "up"
+        else:
+            direction = "right"
+    elif (start[0] + 1, start[1] + 0) == ans:
+        if direction != "up": # accounting for snake bumping into itself
+            direction = "down"
+        else:
+            direction = "left"
+    elif (start[0] + 0, start[1] + -1) == ans:
         if direction != "right": # accounting for snake bumping into itself
             direction = "left"
         else:
-            direction = "up"
-    elif (start[0] + 1, start[1] + 0) == ans:
+            direction = "down"
+    elif (start[0] + 0, start[1] + 1) == ans:
         if direction != "left": # accounting for snake bumping into itself
             direction = "right"
         else:
             direction = "up"
-    elif (start[0] + 0, start[1] + -1) == ans:
-        if direction != "down": # accounting for snake bumping into itself
-            direction = "up"
-        else:
-            direction = "left"
-    elif (start[0] + 0, start[1] + 1) == ans:
-        if direction != "up": # accounting for snake bumping into itself
-            direction = "down"
-        else:
-            direction = "right"
     else:
         pass
         #print(start, ans)
 
-            
+    
 
     return direction
     # Default: keep moving in the current direction

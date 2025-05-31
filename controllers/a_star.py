@@ -42,6 +42,7 @@ def d(a, b):
     return 1
 
 def a_star(start, goal, grid):
+    
     openSet = {start}
 
     cameFrom = {}
